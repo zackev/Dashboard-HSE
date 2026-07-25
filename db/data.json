@@ -1,0 +1,316 @@
+{
+  "incidents": [
+    {
+      "id": 1,
+      "title": "Tumpahan oli di area produksi",
+      "type": "Near Miss",
+      "severity": "Low",
+      "location": "Workshop A - Line 2",
+      "date": "2026-07-10",
+      "reported_by": "Andi Saputra",
+      "status": "Closed",
+      "description": "Ditemukan tumpahan oli hidrolik kecil di lantai dekat mesin press. Langsung dibersihkan dan area diberi tanda.",
+      "created_at": "2026-07-10T02:00:00.000Z",
+      "updated_at": "2026-07-11T05:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "title": "Pekerja tidak memakai safety helmet",
+      "type": "Unsafe Act",
+      "severity": "Medium",
+      "location": "Area Konstruksi Gudang B",
+      "date": "2026-07-18",
+      "reported_by": "Siti Rahma",
+      "status": "In Progress",
+      "description": "Ditemukan 2 pekerja kontraktor tidak memakai helm saat bekerja di ketinggian rendah. Sudah diberi teguran lisan.",
+      "created_at": "2026-07-18T03:20:00.000Z",
+      "updated_at": "2026-07-18T03:20:00.000Z"
+    },
+    {
+      "id": 3,
+      "title": "Kebocoran gas LPG di dapur kantin",
+      "type": "Hazard",
+      "severity": "High",
+      "location": "Kantin Karyawan",
+      "date": "2026-07-22",
+      "reported_by": "Budi Hartono",
+      "status": "Open",
+      "description": "Tercium bau gas di area kompor kantin. Regulator diduga bocor, area sudah diisolasi sementara menunggu teknisi.",
+      "created_at": "2026-07-22T01:10:00.000Z",
+      "updated_at": "2026-07-22T01:10:00.000Z"
+    }
+  ],
+  "inspections": [
+    {
+      "id": 1,
+      "title": "Inspeksi APAR Bulanan",
+      "area": "Seluruh Gedung",
+      "inspector": "Rina Wijaya",
+      "date": "2026-07-05",
+      "status": "Completed",
+      "findings": "Semua APAR dalam kondisi baik, 2 unit perlu isi ulang bulan depan.",
+      "created_at": "2026-07-05T01:00:00.000Z",
+      "updated_at": "2026-07-05T04:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "title": "Inspeksi Alat Pelindung Diri (APD)",
+      "area": "Workshop A",
+      "inspector": "Andi Saputra",
+      "date": "2026-07-20",
+      "status": "Scheduled",
+      "findings": "",
+      "created_at": "2026-07-19T06:00:00.000Z",
+      "updated_at": "2026-07-19T06:00:00.000Z"
+    }
+  ],
+  "trainings": [
+    {
+      "id": 1,
+      "title": "Pelatihan Penggunaan APAR & Evakuasi Kebakaran",
+      "trainer": "Dinas Pemadam Kebakaran Kota",
+      "date": "2026-06-15",
+      "participants": 24,
+      "status": "Completed",
+      "notes": "Termasuk simulasi evakuasi gedung utama.",
+      "created_at": "2026-06-10T01:00:00.000Z",
+      "updated_at": "2026-06-15T08:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "title": "Induksi K3 Karyawan Baru",
+      "trainer": "Tim HSE Internal",
+      "date": "2026-08-01",
+      "participants": 12,
+      "status": "Scheduled",
+      "notes": "Untuk batch karyawan baru bulan Agustus.",
+      "created_at": "2026-07-20T02:00:00.000Z",
+      "updated_at": "2026-07-20T02:00:00.000Z"
+    }
+  ],
+  "capa": [
+    {
+      "id": 1,
+      "title": "Perbaikan regulator gas kantin",
+      "related_to": "Kebocoran gas LPG di dapur kantin",
+      "type": "Corrective",
+      "pic": "Budi Hartono",
+      "due_date": "2026-07-25",
+      "status": "In Progress",
+      "created_at": "2026-07-22T02:00:00.000Z",
+      "updated_at": "2026-07-23T02:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "title": "Sosialisasi ulang wajib helm di area konstruksi",
+      "related_to": "Pekerja tidak memakai safety helmet",
+      "type": "Preventive",
+      "pic": "Siti Rahma",
+      "due_date": "2026-07-28",
+      "status": "Open",
+      "created_at": "2026-07-18T04:00:00.000Z",
+      "updated_at": "2026-07-18T04:00:00.000Z"
+    }
+  ],
+  "hse_performance": [
+    {
+      "id": 1,
+      "period": "2026-05",
+      "male_workers": 142,
+      "female_workers": 38,
+      "man_hours": 28800,
+      "near_miss": 4,
+      "first_aid_case": 3,
+      "medical_treatment_case": 1,
+      "restricted_work_case": 0,
+      "property_damage": 1,
+      "lost_time_incident": 0,
+      "lost_days": 0,
+      "fatality": 0,
+      "notes": "Tidak ada kejadian LTI bulan ini.",
+      "created_at": "2026-06-01T01:00:00.000Z",
+      "updated_at": "2026-06-01T01:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "period": "2026-06",
+      "male_workers": 145,
+      "female_workers": 40,
+      "man_hours": 29600,
+      "near_miss": 6,
+      "first_aid_case": 2,
+      "medical_treatment_case": 1,
+      "restricted_work_case": 1,
+      "property_damage": 0,
+      "lost_time_incident": 1,
+      "lost_days": 5,
+      "fatality": 0,
+      "notes": "1 LTI di area workshop, 5 hari hilang kerja.",
+      "created_at": "2026-07-01T01:00:00.000Z",
+      "updated_at": "2026-07-01T01:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "period": "2026-07",
+      "male_workers": 148,
+      "female_workers": 41,
+      "man_hours": 30240,
+      "near_miss": 5,
+      "first_aid_case": 4,
+      "medical_treatment_case": 0,
+      "restricted_work_case": 0,
+      "property_damage": 1,
+      "lost_time_incident": 0,
+      "lost_days": 0,
+      "fatality": 0,
+      "notes": "Tren membaik, zero LTI 2 bulan berturut-turut belum tercapai.",
+      "created_at": "2026-07-24T01:00:00.000Z",
+      "updated_at": "2026-07-24T01:00:00.000Z"
+    }
+  ],
+  "permits": [
+    {
+      "id": 1,
+      "permit_no": "IK-2026-0142",
+      "type": "Hot Work",
+      "location": "Workshop A - Line 2",
+      "work_description": "Pengelasan pipa hidrolik yang bocor.",
+      "requested_by": "Andi Saputra",
+      "approved_by": "Rina Wijaya",
+      "valid_from": "2026-07-24",
+      "valid_to": "2026-07-25",
+      "status": "Active",
+      "created_at": "2026-07-23T04:00:00.000Z",
+      "updated_at": "2026-07-24T01:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "permit_no": "IK-2026-0143",
+      "type": "Confined Space",
+      "location": "Tangki Penyimpanan B-3",
+      "work_description": "Inspeksi internal tangki sebelum maintenance tahunan.",
+      "requested_by": "Budi Hartono",
+      "approved_by": "",
+      "valid_from": "2026-07-28",
+      "valid_to": "2026-07-29",
+      "status": "Submitted",
+      "created_at": "2026-07-22T06:00:00.000Z",
+      "updated_at": "2026-07-22T06:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "permit_no": "IK-2026-0138",
+      "type": "Working at Height",
+      "location": "Atap Gudang B",
+      "work_description": "Perbaikan atap yang bocor.",
+      "requested_by": "Siti Rahma",
+      "approved_by": "Rina Wijaya",
+      "valid_from": "2026-07-15",
+      "valid_to": "2026-07-16",
+      "status": "Closed",
+      "created_at": "2026-07-14T02:00:00.000Z",
+      "updated_at": "2026-07-16T08:00:00.000Z"
+    }
+  ],
+  "kpis": [
+    {
+      "id": 1,
+      "kpi_name": "Zero Fatality",
+      "category": "Lagging",
+      "period": "2026",
+      "target": 0,
+      "actual": 0,
+      "unit": "kasus",
+      "status": "On Track",
+      "created_at": "2026-01-05T01:00:00.000Z",
+      "updated_at": "2026-07-20T01:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "kpi_name": "TRIR di bawah 1.0",
+      "category": "Lagging",
+      "period": "2026",
+      "target": 1.0,
+      "actual": 0.66,
+      "unit": "rate",
+      "status": "On Track",
+      "created_at": "2026-01-05T01:00:00.000Z",
+      "updated_at": "2026-07-24T01:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "kpi_name": "Partisipasi Safety Talk Mingguan",
+      "category": "Leading",
+      "period": "Juli 2026",
+      "target": 95,
+      "actual": 88,
+      "unit": "%",
+      "status": "At Risk",
+      "created_at": "2026-07-01T01:00:00.000Z",
+      "updated_at": "2026-07-22T01:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "kpi_name": "Penyelesaian CAPA Tepat Waktu",
+      "category": "Leading",
+      "period": "Q2 2026",
+      "target": 90,
+      "actual": 92,
+      "unit": "%",
+      "status": "Achieved",
+      "created_at": "2026-04-01T01:00:00.000Z",
+      "updated_at": "2026-07-05T01:00:00.000Z"
+    }
+  ],
+  "documents": [
+    {
+      "id": 1,
+      "title": "Kebijakan K3 Perusahaan",
+      "category": "Policy",
+      "doc_number": "POL-HSE-001",
+      "revision": "Rev. 3",
+      "issue_date": "2026-01-10",
+      "expiry_date": "2028-01-10",
+      "status": "Active",
+      "uploaded_by": "Tim HSE Internal",
+      "file_name": null,
+      "file_path": null,
+      "created_at": "2026-01-10T01:00:00.000Z",
+      "updated_at": "2026-01-10T01:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "title": "SOP Penggunaan APAR",
+      "category": "Procedure/SOP",
+      "doc_number": "SOP-HSE-014",
+      "revision": "Rev. 1",
+      "issue_date": "2026-03-01",
+      "expiry_date": "2027-03-01",
+      "status": "Active",
+      "uploaded_by": "Rina Wijaya",
+      "file_name": null,
+      "file_path": null,
+      "created_at": "2026-03-01T01:00:00.000Z",
+      "updated_at": "2026-03-01T01:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "title": "Sertifikat Ahli K3 Umum - Andi Saputra",
+      "category": "Certificate",
+      "doc_number": "CERT-AK3U-2023-118",
+      "revision": "-",
+      "issue_date": "2023-08-12",
+      "expiry_date": "2026-08-12",
+      "status": "Active",
+      "uploaded_by": "Andi Saputra",
+      "file_name": null,
+      "file_path": null,
+      "created_at": "2023-08-12T01:00:00.000Z",
+      "updated_at": "2023-08-12T01:00:00.000Z"
+    }
+  ],
+  "_seq": {
+    "incidents": 3, "inspections": 2, "trainings": 2, "capa": 2,
+    "hse_performance": 3, "permits": 3, "kpis": 4, "documents": 3
+  }
+}
