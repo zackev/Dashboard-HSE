@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body {
+    @apply bg-bg text-ink;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  ::selection { background: theme('colors.brand.orange'); color: #1c0e00; }
+}
+
+@layer components {
+  .btn {
+    @apply rounded-[10px] px-4 py-2 text-[13.5px] font-bold transition active:translate-y-px;
+  }
+  .btn-primary {
+    @apply bg-brand-orange text-[#1c0e00] hover:brightness-110;
+  }
+  .btn-ghost {
+    @apply bg-surface2 text-ink hover:brightness-125;
+  }
+  .btn-icon {
+    @apply inline-flex h-[30px] w-[30px] items-center justify-center rounded-[7px] border border-border bg-surface2 text-muted hover:text-ink;
+  }
+  .btn-icon-danger:hover {
+    @apply text-bad border-bad;
+  }
+  .field-input {
+    @apply w-full rounded-lg border border-border bg-surface2 px-3 py-2 text-[13.5px] text-ink outline-none focus:border-brand-orange;
+  }
+  .field-label {
+    @apply mb-1.5 block text-xs font-bold uppercase tracking-wide text-muted;
+  }
+  .panel {
+    @apply mb-4 rounded-[10px] border border-border bg-surface p-5;
+  }
+  .badge {
+    @apply inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-wide;
+  }
+}
+
+/* Hazard-stripe accent used sparingly under the sidebar brand mark */
+.hazard-divider {
+  border-image: repeating-linear-gradient(45deg, #f2c230 0 10px, #1a1a1a 10px 20px) 1;
+}
