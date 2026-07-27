@@ -1,11 +1,12 @@
 {
   "name": "hse-dashboard",
   "version": "1.0.0",
-  "description": "HSE (Health, Safety, Environment) Dashboard - Node.js demo with full CRUD, JSON file persistence. Designed so the API layer can later be swapped for a Laravel backend.",
+  "description": "HSE (Health, Safety, Environment) Dashboard - Node.js demo with full CRUD, JSON file persistence.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "build": "cd frontend && npm install && npm run build"
   },
   "dependencies": {
     "express": "^4.19.2",
