@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HSE Command &middot; Dashboard K3</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div class="brand-text">
+            <span class="brand-title">HSE COMMAND</span>
+            <span class="brand-sub"
+              >Health &middot; Safety &middot; Environment</span
+            >
+          </div>
+        </div>
+
+        <nav class="nav" id="nav">
+          <button class="nav-item is-active" data-view="dashboard">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 13h4v8H3v-8Zm7-9h4v17h-4V4Zm7 5h4v12h-4V9Z" />
+            </svg>
+            <span>Dashboard</span>
+          </button>
+          <button class="nav-item" data-view="incidents">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2 1 21h22L12 2Zm0 6.5 6.6 11.5H5.4L12 8.5ZM11 12h2v4h-2v-4Zm0 5h2v2h-2v-2Z"
+              />
+            </svg>
+            <span>Incidents</span>
+            <span class="nav-count" id="count-incidents">0</span>
+          </button>
+          <button class="nav-item" data-view="inspections">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 11h6v2H9v-2Zm0-4h6v2H9V7Zm10-3H5a2 2 0 0 0-2 2v16l4-4h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z"
+              />
+            </svg>
+            <span>Inspections</span>
+            <span class="nav-count" id="count-inspections">0</span>
+          </button>
+          <button class="nav-item" data-view="trainings">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 3 1 9l11 6 9-4.9V17h2V9L12 3ZM5 13.2V17c0 2.2 3.1 4 7 4s7-1.8 7-4v-3.8l-7 3.8-7-3.8Z"
+              />
+            </svg>
+            <span>Trainings</span>
+            <span class="nav-count" id="count-trainings">0</span>
+          </button>
+          <button class="nav-item" data-view="capa">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M20 6h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a1 1 0 0 0 0 2h1v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8h1a1 1 0 0 0 0-2ZM10 4h4v2h-4V4Zm0 6h2v8h-2v-8Zm4 0h2v8h-2v-8Z"
+              />
+            </svg>
+            <span>CAPA</span>
+            <span class="nav-count" id="count-capa">0</span>
+          </button>
+
+          <div class="nav-divider">Performa &amp; Kepatuhan</div>
+
+          <button class="nav-item" data-view="hse_performance">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M3 3v18h18v-2H5V3H3Zm4 14h2V9H7v8Zm4 0h2v-5h-2v5Zm4 0h2V6h-2v11Z"
+              />
+            </svg>
+            <span>HSE Performance</span>
+            <span class="nav-count" id="count-hse_performance">0</span>
+          </button>
+          <button class="nav-item" data-view="permits">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm-9 14-4-4 1.4-1.4L10 14.2l6.6-6.6L18 9l-8 8Z"
+              />
+            </svg>
+            <span>Ijin Kerja</span>
+            <span class="nav-count" id="count-permits">0</span>
+          </button>
+          <button class="nav-item" data-view="kpis">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2 2 7v6c0 5.5 3.8 10.7 10 12 6.2-1.3 10-6.5 10-12V7l-10-5Zm0 9.8 5-2.9v3.1c0 3.8-2.5 7.4-5 8.4-2.5-1-5-4.6-5-8.4V8.9l5 2.9Z"
+              />
+            </svg>
+            <span>KPI</span>
+            <span class="nav-count" id="count-kpis">0</span>
+          </button>
+          <button class="nav-item" data-view="documents">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 6V3.5L19.5 9H15a1 1 0 0 1-1-1Zm-6 4h8v2H8v-2Zm0 4h8v2H8v-2Z"
+              />
+            </svg>
+            <span>Document</span>
+            <span class="nav-count" id="count-documents">0</span>
+          </button>
+        </nav>
+
+        <!-- <div class="sidebar-footer">
+      <span class="pulse-dot" aria-hidden="true"></span>
+      <div>
+        <div class="footer-title">Demo Node.js</div>
+        <div class="footer-sub">Data tersimpan lifetime &middot; siap migrasi ke Laravel</div>
+      </div>
+    </div> -->
+      </aside>
+
+      <!-- MAIN -->
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <h1 id="view-title">Dashboard</h1>
+            <p id="view-subtitle" class="muted">
+              Ringkasan kondisi K3 hari ini
+            </p>
+          </div>
+          <div class="topbar-actions">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M21 21l-4.35-4.35m0 0a7 7 0 1 0-9.9-9.9 7 7 0 0 0 9.9 9.9Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+              </svg>
+              <input
+                type="text"
+                id="global-search"
+                placeholder="Cari data..."
+              />
+            </div>
+            <button class="btn btn-primary" id="btn-add">+ Tambah Data</button>
+          </div>
+        </header>
+
+        <!-- DASHBOARD VIEW -->
+        <section class="view" id="view-dashboard">
+          <div class="stat-grid">
+            <div class="stat-card accent-orange">
+              <span class="stat-label">Total Incidents</span>
+              <span class="stat-value" id="stat-incidents">0</span>
+              <span class="stat-foot" id="stat-incidents-open"
+                >0 masih terbuka</span
+              >
+            </div>
+            <div class="stat-card accent-blue">
+              <span class="stat-label">Inspections</span>
+              <span class="stat-value" id="stat-inspections">0</span>
+              <span class="stat-foot">total tercatat</span>
+            </div>
+            <div class="stat-card accent-green">
+              <span class="stat-label">Trainings</span>
+              <span class="stat-value" id="stat-trainings">0</span>
+              <span class="stat-foot" id="stat-participants"
+                >0 peserta total</span
+              >
+            </div>
+            <div class="stat-card accent-red">
+              <span class="stat-label">CAPA Terbuka</span>
+              <span class="stat-value" id="stat-capa-open">0</span>
+              <span class="stat-foot" id="stat-capa-total">dari 0 total</span>
+            </div>
+          </div>
+
+          <div class="chart-grid">
+            <div class="panel">
+              <h3>Incidents berdasarkan Severity</h3>
+              <canvas id="chart-severity" height="220"></canvas>
+            </div>
+            <div class="panel">
+              <h3>Status CAPA</h3>
+              <canvas id="chart-capa" height="220"></canvas>
+            </div>
+          </div>
+
+          <h3 class="section-label">
+            HSE Performance
+            <span class="section-label-period" id="perf-period-label"></span>
+          </h3>
+          <div class="stat-grid">
+            <div class="stat-card accent-blue">
+              <span class="stat-label">FR (Frequency Rate)</span>
+              <span class="stat-value" id="stat-fr">0</span>
+              <span class="stat-foot">per 1.000.000 jam kerja</span>
+            </div>
+            <div class="stat-card accent-green">
+              <span class="stat-label">SR (Severity Rate)</span>
+              <span class="stat-value" id="stat-sr">0</span>
+              <span class="stat-foot">per 1.000.000 jam kerja</span>
+            </div>
+            <div class="stat-card accent-orange">
+              <span class="stat-label">TRIR</span>
+              <span class="stat-value" id="stat-trir">0</span>
+              <span class="stat-foot">per 200.000 jam kerja</span>
+            </div>
+            <div class="stat-card accent-red">
+              <span class="stat-label">LTIF</span>
+              <span class="stat-value" id="stat-ltif">0</span>
+              <span class="stat-foot">per 1.000.000 jam kerja</span>
+            </div>
+          </div>
+
+          <div class="chart-grid">
+            <div class="panel">
+              <h3>Tenaga Kerja Hadir (Periode Terbaru)</h3>
+              <canvas id="chart-gender" height="220"></canvas>
+            </div>
+            <div class="panel">
+              <h3>Tren TRIR &amp; LTIF per Periode</h3>
+              <canvas id="chart-trend" height="220"></canvas>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Snapshot Kepatuhan</h3>
+            <div class="mini-stat-row">
+              <div class="mini-stat">
+                <span class="mini-stat-value" id="mini-permits-active">0</span>
+                <span class="mini-stat-label">Ijin Kerja Aktif</span>
+              </div>
+              <div class="mini-stat">
+                <span class="mini-stat-value" id="mini-permits-expiring"
+                  >0</span
+                >
+                <span class="mini-stat-label">Ijin Kerja Segera Berakhir</span>
+              </div>
+              <div class="mini-stat">
+                <span class="mini-stat-value" id="mini-kpi-achieved">0</span>
+                <span class="mini-stat-label">KPI Tercapai</span>
+              </div>
+              <div class="mini-stat">
+                <span class="mini-stat-value" id="mini-docs-attention">0</span>
+                <span class="mini-stat-label">Dokumen Perlu Perhatian</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Incidents Terbaru</h3>
+            <div class="table-wrap">
+              <table class="data-table" id="table-recent-incidents">
+                <thead>
+                  <tr>
+                    <th>Judul</th>
+                    <th>Severity</th>
+                    <th>Lokasi</th>
+                    <th>Tanggal</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- INCIDENTS VIEW -->
+        <section class="view is-hidden" id="view-incidents">
+          <div class="panel">
+            <div class="table-wrap">
+              <table class="data-table" id="table-incidents">
+                <thead>
+                  <tr>
+                    <th>Judul</th>
+                    <th>Tipe</th>
+                    <th>Severity</th>
+                    <th>Lokasi</th>
+                    <th>Tanggal</th>
+                    <th>Pelapor</th>
+                    <th>Status</th>
+                    <th class="col-actions">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- INSPECTIONS VIEW -->
+        <section class="view is-hidden" id="view-inspections">
+          <div class="panel">
+            <div class="table-wrap">
+              <table class="data-table" id="table-inspections">
+                <thead>
+                  <tr>
+                    <th>Judul</th>
+                    <th>Area</th>
+                    <th>Inspektor</th>
+                    <th>Tanggal</th>
+                    <th>Status</th>
+                    <th>Temuan</th>
+                    <th class="col-actions">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TRAININGS VIEW -->
+        <section class="view is-hidden" id="view-trainings">
+          <div class="panel">
+            <div class="table-wrap">
+              <table class="data-table" id="table-trainings">
+                <thead>
+                  <tr>
+                    <th>Judul</th>
+                    <th>Trainer</th>
+                    <th>Tanggal</th>
+                    <th>Peserta</th>
+                    <th>Status</th>
+                    <th class="col-actions">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- CAPA VIEW -->
+        <section class="view is-hidden" id="view-capa">
+          <div class="panel">
+            <div class="table-wrap">
+              <table class="data-table" id="table-capa">
+                <thead>
+                  <tr>
+                    <th>Judul</th>
+                    <th>Terkait</th>
+                    <th>Tipe</th>
+                    <th>PIC</th>
+                    <th>Jatuh Tempo</th>
+                    <th>Status</th>
+                    <th class="col-actions">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- HSE PERFORMANCE VIEW -->
+        <section class="view is-hidden" id="view-hse_performance">
+          <div class="panel formula-note">
+            <h3>Metodologi Perhitungan</h3>
+            <p>
+              <strong>FR</strong> = (Lost Time Incident &times; 1.000.000)
+              &divide; Jam Kerja Orang &middot; <strong>SR</strong> = (Hari
+              Hilang &times; 1.000.000) &divide; Jam Kerja Orang &middot;
+              <strong>TRIR</strong> = (Total Recordable Cases &times; 200.000)
+              &divide; Jam Kerja Orang &middot; <strong>LTIF</strong> = (Lost
+              Time Incident &times; 1.000.000) &divide; Jam Kerja Orang.
+              Recordable Cases = MTC + RWC + LTI + Fatality.
+            </p>
+          </div>
+          <div class="panel">
+            <div class="table-wrap">
+              <table class="data-table" id="table-hse_performance">
+                <thead>
+                  <tr>
+                    <th>Periode</th>
+                    <th>Tenaga Kerja (L/P)</th>
+                    <th>Jam Kerja Orang</th>
+                    <th>Near Miss</th>
+                    <th>FAC</th>
+                    <th>MTC</th>
+                    <th>RWC</th>
+                    <th>Property Damage</th>
+                    <th>LTI</th>
+                    <th>Fatality</th>
+                    <th>FR</th>
+                    <th>SR</th>
+                    <th>TRIR</th>
+                    <th>LTIF</th>
+                    <th class="col-actions">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- PERMITS VIEW -->
+        <section class="view is-hidden" id="view-permits">
+          <div class="panel">
+            <div class="table-wrap">
+              <table class="data-table" id="table-permits">
+                <thead>
+                  <tr>
+                    <th>No. Ijin</th>
+                    <th>Tipe</th>
+                    <th>Lokasi</th>
+                    <th>Berlaku Dari</th>
+                    <th>Berlaku Sampai</th>
+                    <th>Diajukan Oleh</th>
+                    <th>Status</th>
+                    <th class="col-actions">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- KPI VIEW -->
+        <section class="view is-hidden" id="view-kpis">
+          <div class="panel">
+            <div class="table-wrap">
+              <table class="data-table" id="table-kpis">
+                <thead>
+                  <tr>
+                    <th>Nama KPI</th>
+                    <th>Kategori</th>
+                    <th>Periode</th>
+                    <th>Target</th>
+                    <th>Aktual</th>
+                    <th>Satuan</th>
+                    <th>Status</th>
+                    <th class="col-actions">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- DOCUMENTS VIEW -->
+        <section class="view is-hidden" id="view-documents">
+          <div class="panel">
+            <div class="table-wrap">
+              <table class="data-table" id="table-documents">
+                <thead>
+                  <tr>
+                    <th>Judul</th>
+                    <th>Kategori</th>
+                    <th>No. Dokumen</th>
+                    <th>Revisi</th>
+                    <th>Terbit</th>
+                    <th>Kedaluwarsa</th>
+                    <th>Status</th>
+                    <th>File</th>
+                    <th class="col-actions">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- MODAL FORM (dipakai bergantian untuk semua modul) -->
+    <div class="modal-overlay is-hidden" id="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 id="modal-title">Tambah Data</h2>
+          <button class="modal-close" id="modal-close">&times;</button>
+        </div>
+        <form id="modal-form">
+          <div id="modal-fields" class="modal-fields"></div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-ghost" id="modal-cancel">
+              Batal
+            </button>
+            <button type="submit" class="btn btn-primary" id="modal-submit">
+              Simpan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast is-hidden" id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="/js/app.js"></script>
+  </body>
+</html>

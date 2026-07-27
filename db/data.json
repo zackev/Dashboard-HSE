@@ -115,6 +115,7 @@
   "hse_performance": [
     {
       "id": 1,
+<<<<<<< HEAD
       "date": "2026-06-10",
       "male_workers": 62,
       "female_workers": 38,
@@ -159,10 +160,39 @@
       "first_aid_case": 1,
       "medical_treatment_case": 0,
       "restricted_work_case": 0,
+=======
+      "period": "2026-05",
+      "male_workers": 142,
+      "female_workers": 38,
+      "man_hours": 28800,
+      "near_miss": 4,
+      "first_aid_case": 3,
+      "medical_treatment_case": 1,
+      "restricted_work_case": 0,
+      "property_damage": 1,
+      "lost_time_incident": 0,
+      "lost_days": 0,
+      "fatality": 0,
+      "notes": "Tidak ada kejadian LTI bulan ini.",
+      "created_at": "2026-06-01T01:00:00.000Z",
+      "updated_at": "2026-06-01T01:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "period": "2026-06",
+      "male_workers": 145,
+      "female_workers": 40,
+      "man_hours": 29600,
+      "near_miss": 6,
+      "first_aid_case": 2,
+      "medical_treatment_case": 1,
+      "restricted_work_case": 1,
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
       "property_damage": 0,
       "lost_time_incident": 1,
       "lost_days": 5,
       "fatality": 0,
+<<<<<<< HEAD
       "notes": "1 Lost Time Incident, pekerja istirahat 5 hari.",
       "created_at": "2026-06-15T09:00:00.000Z",
       "updated_at": "2026-06-15T09:00:00.000Z"
@@ -175,12 +205,27 @@
       "working_hours": 8,
       "near_miss": 1,
       "first_aid_case": 0,
+=======
+      "notes": "1 LTI di area workshop, 5 hari hilang kerja.",
+      "created_at": "2026-07-01T01:00:00.000Z",
+      "updated_at": "2026-07-01T01:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "period": "2026-07",
+      "male_workers": 148,
+      "female_workers": 41,
+      "man_hours": 30240,
+      "near_miss": 5,
+      "first_aid_case": 4,
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
       "medical_treatment_case": 0,
       "restricted_work_case": 0,
       "property_damage": 1,
       "lost_time_incident": 0,
       "lost_days": 0,
       "fatality": 0,
+<<<<<<< HEAD
       "notes": "Kerusakan ringan pada pagar pembatas akibat forklift.",
       "created_at": "2026-06-20T09:00:00.000Z",
       "updated_at": "2026-06-20T09:00:00.000Z"
@@ -238,6 +283,11 @@
       "notes": "Data terbaru, jumlah tenaga kerja terus bertambah.",
       "created_at": "2026-07-24T09:00:00.000Z",
       "updated_at": "2026-07-24T09:00:00.000Z"
+=======
+      "notes": "Tren membaik, zero LTI 2 bulan berturut-turut belum tercapai.",
+      "created_at": "2026-07-24T01:00:00.000Z",
+      "updated_at": "2026-07-24T01:00:00.000Z"
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
     }
   ],
   "permits": [
@@ -252,6 +302,7 @@
       "valid_from": "2026-07-24",
       "valid_to": "2026-07-25",
       "status": "Active",
+<<<<<<< HEAD
       "jsa": [
         {
           "step": "Matikan & isolasi sumber tekanan hidrolik sebelum pengelasan",
@@ -269,6 +320,8 @@
           "control": "APAR jenis CO2/dry chemical standby, fire watch selama proses"
         }
       ],
+=======
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
       "created_at": "2026-07-23T04:00:00.000Z",
       "updated_at": "2026-07-24T01:00:00.000Z"
     },
@@ -283,6 +336,7 @@
       "valid_from": "2026-07-28",
       "valid_to": "2026-07-29",
       "status": "Submitted",
+<<<<<<< HEAD
       "jsa": [
         {
           "step": "Uji kadar oksigen & gas berbahaya sebelum masuk tangki",
@@ -295,6 +349,8 @@
           "control": "Ada standby man di luar, komunikasi radio terus-menerus"
         }
       ],
+=======
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
       "created_at": "2026-07-22T06:00:00.000Z",
       "updated_at": "2026-07-22T06:00:00.000Z"
     },
@@ -309,6 +365,7 @@
       "valid_from": "2026-07-15",
       "valid_to": "2026-07-16",
       "status": "Closed",
+<<<<<<< HEAD
       "jsa": [
         {
           "step": "Pasang safety net & full body harness sebelum naik atap",
@@ -321,6 +378,8 @@
           "control": "Pekerjaan dihentikan kalau hujan atau angin di atas ambang aman"
         }
       ],
+=======
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
       "created_at": "2026-07-14T02:00:00.000Z",
       "updated_at": "2026-07-16T08:00:00.000Z"
     }
@@ -343,7 +402,11 @@
       "kpi_name": "TRIR di bawah 1.0",
       "category": "Lagging",
       "period": "2026",
+<<<<<<< HEAD
       "target": 1,
+=======
+      "target": 1.0,
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
       "actual": 0.66,
       "unit": "rate",
       "status": "On Track",
@@ -423,6 +486,7 @@
     }
   ],
   "_seq": {
+<<<<<<< HEAD
     "incidents": 3,
     "inspections": 2,
     "trainings": 2,
@@ -433,3 +497,9 @@
     "documents": 3
   }
 }
+=======
+    "incidents": 3, "inspections": 2, "trainings": 2, "capa": 2,
+    "hse_performance": 3, "permits": 3, "kpis": 4, "documents": 3
+  }
+}
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56

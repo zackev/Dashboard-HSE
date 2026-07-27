@@ -1,6 +1,7 @@
 /**
  * server.js
  * -------------------------------------------------------------------------
+<<<<<<< HEAD
  * Entry point aplikasi HSE Dashboard (backend Node.js + Express).
  *
  * Semua data disimpan lifetime di db/data.json (lihat db/database.js).
@@ -17,13 +18,28 @@
  *       cd frontend && npm install && npm run build
  *       cd .. && npm start
  *     Buka http://localhost:3000  (Express men-serve hasil build React dari frontend/dist)
+=======
+ * Entry point aplikasi HSE Dashboard (demo Node.js + Express).
+ *
+ * Semua data disimpan lifetime di db/data.json (lihat db/database.js).
+ * API di-mount di /api/*, frontend statis (HTML/CSS/JS) disajikan dari
+ * folder public/.
+ *
+ * Jalankan:
+ *   npm install
+ *   npm start
+ * Lalu buka http://localhost:3000
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
  * -------------------------------------------------------------------------
  */
 
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+<<<<<<< HEAD
 const fs = require('fs');
+=======
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
 const apiRoutes = require('./routes/index');
 
 const app = express();
@@ -38,6 +54,7 @@ app.use('/api', apiRoutes);
 // File dokumen yang di-upload (persisten di folder uploads/)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+<<<<<<< HEAD
 // Frontend hasil build React (Vite) — hanya ada setelah `npm run build` di folder frontend/
 const FRONTEND_DIST = path.join(__dirname, 'frontend', 'dist');
 
@@ -61,4 +78,14 @@ app.listen(PORT, () => {
   if (!fs.existsSync(FRONTEND_DIST)) {
     console.log('Catatan: frontend/dist belum ada. Lihat pesan di http://localhost:' + PORT + ' untuk cara menjalankan frontend.');
   }
+=======
+// Frontend statis
+app.use(express.static(path.join(__dirname, 'public')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.listen(PORT, () => {
+  console.log(`HSE Dashboard jalan di http://localhost:${PORT}`);
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
 });

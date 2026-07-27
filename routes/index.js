@@ -1,9 +1,14 @@
 const express = require('express');
 const makeCrudRouter = require('./crudFactory');
 const db = require('../db/database');
+<<<<<<< HEAD
 const { router: hsePerformanceRouter, computeAll } = require('./hsePerformance');
 const documentsRouter = require('./documents');
 const permitsRouter = require('./permits');
+=======
+const { router: hsePerformanceRouter, computeMetrics } = require('./hsePerformance');
+const documentsRouter = require('./documents');
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
 
 const router = express.Router();
 
@@ -13,7 +18,11 @@ router.use('/inspections', makeCrudRouter('inspections', ['title', 'area', 'insp
 router.use('/trainings', makeCrudRouter('trainings', ['title', 'trainer', 'date']));
 router.use('/capa', makeCrudRouter('capa', ['title', 'type', 'pic', 'due_date']));
 router.use('/hse_performance', hsePerformanceRouter);
+<<<<<<< HEAD
 router.use('/permits', permitsRouter);
+=======
+router.use('/permits', makeCrudRouter('permits', ['permit_no', 'type', 'location', 'valid_from', 'valid_to', 'status']));
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
 router.use('/kpis', makeCrudRouter('kpis', ['kpi_name', 'category', 'period', 'target', 'status']));
 router.use('/documents', documentsRouter);
 
@@ -26,7 +35,11 @@ router.get('/stats', (req, res) => {
   const permits = db.getAll('permits');
   const kpis = db.getAll('kpis');
   const documents = db.getAll('documents');
+<<<<<<< HEAD
   const hsePerf = computeAll(db.getAll('hse_performance')); // sudah terurut naik berdasarkan tanggal
+=======
+  const hsePerf = db.getAll('hse_performance').map(computeMetrics).sort((a, b) => (a.period > b.period ? 1 : -1));
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
 
   const countBy = (rows, key) =>
     rows.reduce((acc, r) => {
@@ -39,8 +52,13 @@ router.get('/stats', (req, res) => {
   const in30days = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
 
   const latestPerf = hsePerf.length ? hsePerf[hsePerf.length - 1] : null;
+<<<<<<< HEAD
   const trend = hsePerf.slice(-14).map((p) => ({
     date: p.date, fr: p.fr, sr: p.sr, trir: p.trir, ltif: p.ltif
+=======
+  const trend = hsePerf.slice(-12).map((p) => ({
+    period: p.period, fr: p.fr, sr: p.sr, trir: p.trir, ltif: p.ltif
+>>>>>>> 405c9e708fa4a23d2ad6570c0fb57fb21d597f56
   }));
 
   const activePermits = permits.filter((p) => p.status === 'Active').length;
