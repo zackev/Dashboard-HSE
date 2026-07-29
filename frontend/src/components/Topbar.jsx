@@ -1,6 +1,13 @@
-import { Search } from 'lucide-react';
+import { Search } from "lucide-react";
 
-export default function Topbar({ title, subtitle, showAdd, onAdd, search, onSearchChange }) {
+export default function Topbar({
+  title,
+  subtitle,
+  showAdd,
+  onAdd,
+  search,
+  onSearchChange,
+}) {
   return (
     <header className="mb-5 flex flex-wrap items-start justify-between gap-5">
       <div>
@@ -21,7 +28,10 @@ export default function Topbar({ title, subtitle, showAdd, onAdd, search, onSear
           </div>
         )}
         {showAdd && (
-          <button className="btn btn-primary whitespace-nowrap" onClick={onAdd}>
+          <button
+            className="btn btn-primary whitespace-nowrap !text-white"
+            onClick={onAdd}
+          >
             + Tambah Data
           </button>
         )}

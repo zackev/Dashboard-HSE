@@ -26,11 +26,14 @@ const ICONS = {
 
 export default function Sidebar({ counts }) {
   return (
-    <aside className="sticky top-0 flex h-screen w-[250px] flex-col bg-gradient-to-b from-[#171c21] to-bg px-3.5 py-5 max-md:static max-md:h-auto max-md:w-full">
-      <div className="hazard-divider mb-4 flex items-center gap-2.5 border-b-[3px] pb-5">
-        <div className="h-[30px] w-[30px] flex-shrink-0 rounded-[7px] bg-gradient-to-br from-brand-orange to-brand-yellow" />
+    <aside className="sticky top-0 flex h-screen w-[250px] flex-col border-r border-border bg-surface px-3.5 py-5 max-md:static max-md:h-auto max-md:w-full">
+      <div className="mb-5 flex items-center gap-3 border-b border-border pb-5">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-orange text-white shadow-sm">
+          <Activity size={20} />
+        </div>
+
         <div>
-          <span className="block text-[15px] font-extrabold tracking-wide">
+          <span className="block text-[15px] font-extrabold tracking-wide text-ink">
             HSE COMMAND
           </span>
           <span className="block text-[10.5px] text-muted">
@@ -47,29 +50,33 @@ export default function Sidebar({ counts }) {
                 {group.title}
               </div>
             )}
+
             {group.items.map((item) => {
               const Icon = ICONS[item.key];
               const to =
                 item.key === "dashboard"
                   ? "/"
                   : `/${item.key.replace("_", "-")}`;
+
               return (
                 <NavLink
                   key={item.key}
                   to={to}
                   end={item.key === "dashboard"}
                   className={({ isActive }) =>
-                    `flex items-center gap-2.5 rounded-[10px] px-3 py-2.5 text-[13.5px] font-semibold transition ${
+                    `flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13.5px] font-semibold transition-all duration-200 ${
                       isActive
-                        ? "bg-brand-orangedim text-brand-yellow"
-                        : "text-muted hover:bg-surface hover:text-ink"
+                        ? "bg-brand-orange text-white shadow-sm"
+                        : "text-muted hover:bg-surface2 hover:text-ink"
                     }`
                   }
                 >
                   <Icon size={18} />
+
                   <span>{item.label}</span>
+
                   {item.key !== "dashboard" && (
-                    <span className="ml-auto rounded-full bg-surface2 px-1.5 py-px text-[11px] font-bold text-muted">
+                    <span className="ml-auto rounded-full bg-bg px-2 py-0.5 text-[11px] font-bold text-muted">
                       {counts[item.key] ?? 0}
                     </span>
                   )}
@@ -80,13 +87,17 @@ export default function Sidebar({ counts }) {
         ))}
       </nav>
 
-      {/* <div className="mt-2.5 flex items-center gap-2.5 border-t border-border pt-3.5 max-md:hidden">
-        <span className="h-2 w-2 flex-shrink-0 animate-pulse rounded-full bg-good" />
-        <div>
-          <div className="text-xs font-bold">React + Vite Demo</div>
-          <div className="text-[10.5px] text-muted">Data tersimpan lifetime &middot; siap migrasi ke Laravel</div>
+      {/* Footer bila ingin dipakai lagi */}
+      {/*
+      <div className="mt-4 border-t border-border pt-4">
+        <div className="text-xs font-semibold text-ink">
+          HSE Dashboard
         </div>
-      </div> */}
+        <div className="text-[11px] text-muted">
+          React + Vite + Express
+        </div>
+      </div>
+      */}
     </aside>
   );
 }
