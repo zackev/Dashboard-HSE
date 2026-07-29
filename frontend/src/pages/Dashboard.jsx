@@ -112,7 +112,7 @@ export default function Dashboard({ refreshKey }) {
 
       <div className="mb-5 grid grid-cols-2 gap-4 max-lg:grid-cols-1">
         <div className="panel !mb-0">
-          <h3 className="mb-3.5 text-sm font-semibold">Tenaga Kerja Hadir (Periode Terbaru)</h3>
+          <h3 className="mb-3.5 text-sm font-semibold">Tenaga Kerja Hadir (Tanggal Terbaru)</h3>
           <ResponsiveContainer width="100%" height={220}>
             <PieChart>
               <Pie data={genderData} dataKey="value" nameKey="name" innerRadius={55} outerRadius={80} paddingAngle={2}>

@@ -31,42 +31,14 @@
  * Basis kumulatif dihitung dari tanggal paling awal yang ada di data ini
  * (bukan reset per bulan/tahun). Kalau perusahaan Anda perlu reset per
  * tahun berjalan, tinggal filter rows berdasarkan tahun sebelum dihitung.
-=======
- * Modul HSE Performance: data bulanan (tenaga kerja, jam kerja orang, dan
- * jumlah kasus) plus perhitungan otomatis indikator standar K3:
- *
- *   FR   (Frequency Rate)        = (Lost Time Incident x 1.000.000) / Jam Kerja Orang
- *   SR   (Severity Rate)         = (Jumlah Hari Hilang x 1.000.000) / Jam Kerja Orang
- *   TRIR (Total Recordable
- *         Incident Rate)         = (Total Recordable Cases x 200.000) / Jam Kerja Orang
- *   LTIF (Lost Time Injury
- *         Frequency)             = (Lost Time Incident x 1.000.000) / Jam Kerja Orang
- *
- * Catatan metodologi (supaya transparan, bukan black box):
- *  - FR & SR memakai basis 1.000.000 jam kerja orang, mengikuti konvensi
- *    ILO / Permenaker No. 5 Tahun 2018 yang umum dipakai di Indonesia.
- *  - TRIR memakai basis 200.000 jam kerja orang, mengikuti konvensi OSHA
- *    (setara 100 pekerja x 40 jam/minggu x 50 minggu) yang paling umum
- *    dipakai secara internasional untuk recordable case rate.
- *  - Total Recordable Cases = Medical Treatment Case + Restricted Work Case
- *    + Lost Time Incident + Fatality (First Aid Case & Near Miss TIDAK
- *    dihitung sebagai recordable case, sesuai konvensi umum).
- *  - LTIF di sini menggunakan rumus yang sama dengan FR (LTI x 1.000.000 /
- *    jam kerja orang) karena keduanya memang mengacu pada metrik yang sama
- *    (frekuensi kecelakaan hilang waktu kerja); ditampilkan sebagai dua
- *    kartu terpisah karena keduanya lazim disebut dengan istilah berbeda
- *    dalam laporan HSE di Indonesia.
- *
- * Jika perusahaan Anda memakai basis/definisi berbeda, angka BASE di bawah
- * ini bisa disesuaikan.
  * -------------------------------------------------------------------------
  */
 
-const express = require("express");
-const db = require("../db/database");
+const express = require('express');
+const db = require('../db/database');
 
 const router = express.Router();
-const TABLE = "hse_performance";
+const TABLE = 'hse_performance';
 
 const ILO_BASE = 1000000;
 const OSHA_BASE = 200000;
@@ -83,9 +55,7 @@ function round2(n) {
  * manapun yang diminta tetap konsisten dengan urutan tanggal keseluruhan.
  */
 function computeAll(rawRows) {
-  const sorted = [...rawRows].sort((a, b) =>
-    a.date < b.date ? -1 : a.date > b.date ? 1 : 0,
-  );
+  const sorted = [...rawRows].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 
   let cumManHours = 0;
   let cumLti = 0;
@@ -112,8 +82,7 @@ function computeAll(rawRows) {
 
     const fr = cumManHours > 0 ? (cumLti * ILO_BASE) / cumManHours : 0;
     const sr = cumManHours > 0 ? (cumLostDays * ILO_BASE) / cumManHours : 0;
-    const trir =
-      cumManHours > 0 ? (cumRecordable * OSHA_BASE) / cumManHours : 0;
+    const trir = cumManHours > 0 ? (cumRecordable * OSHA_BASE) / cumManHours : 0;
     const ltif = fr;
 
     return {
@@ -129,12 +98,12 @@ function computeAll(rawRows) {
       fr: round2(fr),
       sr: round2(sr),
       trir: round2(trir),
-      ltif: round2(ltif),
+      ltif: round2(ltif)
     };
   });
 }
 
-router.get("/", (req, res) => {
+router.get('/', (req, res) => {
   let rows = computeAll(db.getAll(TABLE));
   const { q } = req.query;
   if (q) {
@@ -146,30 +115,20 @@ router.get("/", (req, res) => {
   res.json({ data: rows, total: rows.length });
 });
 
-router.get("/:id", (req, res) => {
+router.get('/:id', (req, res) => {
   const all = computeAll(db.getAll(TABLE));
   const row = all.find((r) => r.id === Number(req.params.id));
-  if (!row)
-    return res
-      .status(404)
-      .json({ error: "Data HSE Performance tidak ditemukan" });
+  if (!row) return res.status(404).json({ error: 'Data HSE Performance tidak ditemukan' });
   res.json({ data: row });
 });
 
-router.post("/", (req, res) => {
-  const required = ["date", "male_workers", "female_workers"];
-  const missing = required.filter(
-    (f) => req.body[f] === undefined || req.body[f] === "",
-  );
+router.post('/', (req, res) => {
+  const required = ['date', 'male_workers', 'female_workers'];
+  const missing = required.filter((f) => req.body[f] === undefined || req.body[f] === '');
   if (missing.length) {
-    return res
-      .status(400)
-      .json({ error: `Field wajib diisi: ${missing.join(", ")}` });
+    return res.status(400).json({ error: `Field wajib diisi: ${missing.join(', ')}` });
   }
-  const payload = {
-    ...req.body,
-    working_hours: req.body.working_hours || DEFAULT_WORKING_HOURS,
-  };
+  const payload = { ...req.body, working_hours: req.body.working_hours || DEFAULT_WORKING_HOURS };
   delete payload.man_hours; // selalu dihitung server, bukan diterima dari client
   const row = db.create(TABLE, payload);
 
@@ -178,33 +137,21 @@ router.post("/", (req, res) => {
   res.status(201).json({ data: enriched });
 });
 
-router.put("/:id", (req, res) => {
+router.put('/:id', (req, res) => {
   const payload = { ...req.body };
   delete payload.man_hours;
   const row = db.update(TABLE, req.params.id, payload);
-  if (!row)
-    return res
-      .status(404)
-      .json({ error: "Data HSE Performance tidak ditemukan" });
+  if (!row) return res.status(404).json({ error: 'Data HSE Performance tidak ditemukan' });
 
   const all = computeAll(db.getAll(TABLE));
   const enriched = all.find((r) => r.id === row.id);
   res.json({ data: enriched });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete('/:id', (req, res) => {
   const ok = db.remove(TABLE, req.params.id);
-  if (!ok)
-    return res
-      .status(404)
-      .json({ error: "Data HSE Performance tidak ditemukan" });
+  if (!ok) return res.status(404).json({ error: 'Data HSE Performance tidak ditemukan' });
   res.json({ data: true });
 });
 
-module.exports = {
-  router,
-  computeAll,
-  ILO_BASE,
-  OSHA_BASE,
-  DEFAULT_WORKING_HOURS,
-};
+module.exports = { router, computeAll, ILO_BASE, OSHA_BASE, DEFAULT_WORKING_HOURS };

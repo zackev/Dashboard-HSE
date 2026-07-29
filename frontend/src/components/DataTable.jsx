@@ -1,11 +1,29 @@
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, ListChecks } from 'lucide-react';
 import Badge from './Badge.jsx';
 
 function formatNumber(n) {
   return (Number(n) || 0).toLocaleString('id-ID');
 }
 
-function renderCell(col, row) {
+function renderCell(col, row, onJsaClick) {
+  if (col.jsaColumn) {
+    const count = Array.isArray(row.jsa) ? row.jsa.length : 0;
+    if (count === 0) {
+      return <span className="text-xs italic text-muted">Belum diisi</span>;
+    }
+    return (
+      <button
+        type="button"
+        onClick={() => onJsaClick?.(row)}
+        className="inline-flex items-center gap-1 text-xs font-semibold text-good underline decoration-dotted underline-offset-2 hover:text-good/80"
+        title="Lihat detail JSA"
+      >
+        <ListChecks size={13} />
+        {count} langkah
+      </button>
+    );
+  }
+
   if (col.render) {
     const result = col.render(row);
     if (result && typeof result === 'object') {
@@ -36,7 +54,7 @@ function renderCell(col, row) {
   return val === '' || val === undefined || val === null ? '-' : val;
 }
 
-export default function DataTable({ moduleKey, cfg, rows, loading, onEdit, onDelete }) {
+export default function DataTable({ cfg, rows, loading, onEdit, onDelete, onJsaClick }) {
   const colCount = cfg.columns.length + 1;
 
   return (
@@ -47,7 +65,7 @@ export default function DataTable({ moduleKey, cfg, rows, loading, onEdit, onDel
             {cfg.columns.map((col) => (
               <th
                 key={col.key}
-                className="border-b border-border px-2.5 py-2 text-left text-[11.5px] font-bold uppercase tracking-wide text-muted"
+                className="whitespace-nowrap border-b border-border px-2.5 py-2 text-left text-[11.5px] font-bold uppercase tracking-wide text-muted"
               >
                 {col.label}
               </th>
@@ -80,7 +98,7 @@ export default function DataTable({ moduleKey, cfg, rows, loading, onEdit, onDel
                     key={col.key}
                     className={`border-b border-border px-2.5 py-2.5 align-top ${col.numeric ? 'font-mono text-right' : ''}`}
                   >
-                    {renderCell(col, row)}
+                    {renderCell(col, row, onJsaClick)}
                   </td>
                 ))}
                 <td className="border-b border-border px-2.5 py-2.5 align-top">

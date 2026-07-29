@@ -15,7 +15,7 @@ export default function FormModal({ cfg, initialData, isEdit, onClose, onSubmit 
   useEffect(() => {
     const initial = {};
     cfg.fields.forEach((f) => {
-      if (f.type === 'computed') return; // bukan field beneran, cuma tampilan
+      if (f.type === 'computed') return;
       initial[f.key] = initialData[f.key] ?? f.default ?? '';
     });
     setValues(initial);

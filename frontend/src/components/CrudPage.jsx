@@ -4,18 +4,14 @@ import { useToast } from '../context/ToastContext.jsx';
 import Topbar from '../components/Topbar.jsx';
 import DataTable from '../components/DataTable.jsx';
 import FormModal from '../components/FormModal.jsx';
+import JsaDetailModal from '../components/JsaDetailModal.jsx';
 
-/**
- * Halaman CRUD generik. `moduleKey` menentukan config field/kolom (lihat
- * config/modules.jsx) dan endpoint API (`/api/<moduleKey>`).
- * `extraTop` opsional untuk konten tambahan di atas tabel (dipakai HSE
- * Performance untuk menampilkan catatan metodologi perhitungan).
- */
 export default function CrudPage({ moduleKey, cfg, title, subtitle, onDataChanged, extraTop }) {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [modalState, setModalState] = useState(null); // { isEdit, data }
+  const [jsaDetailRow, setJsaDetailRow] = useState(null); // baris permit yang lagi dilihat detail JSA-nya
   const showToast = useToast();
 
   const load = useCallback(
@@ -71,7 +67,7 @@ export default function CrudPage({ moduleKey, cfg, title, subtitle, onDataChange
       } else {
         const payload = {};
         cfg.fields.forEach((f) => {
-          if (f.type === 'computed') return; // hanya tampilan, bukan data yang dikirim
+          if (f.type === 'computed') return;
           payload[f.key] = f.type === 'number' ? Number(values[f.key] || 0) : values[f.key];
         });
         if (cfg.hasJsa) payload.jsa = jsaRows;
@@ -93,7 +89,7 @@ export default function CrudPage({ moduleKey, cfg, title, subtitle, onDataChange
   }
 
   async function handleDelete(row) {
-    const label = row.title || row.kpi_name || row.permit_no || row.period || 'data ini';
+    const label = row.title || row.kpi_name || row.permit_no || row.date || 'data ini';
     if (!window.confirm(`Hapus "${label}"? Tindakan ini tidak bisa dibatalkan.`)) return;
     try {
       await api.del(`/${moduleKey}/${row.id}`);
@@ -118,12 +114,12 @@ export default function CrudPage({ moduleKey, cfg, title, subtitle, onDataChange
       {extraTop}
       <div className="panel">
         <DataTable
-          moduleKey={moduleKey}
           cfg={cfg}
           rows={rows}
           loading={loading}
           onEdit={openEdit}
           onDelete={handleDelete}
+          onJsaClick={cfg.hasJsa ? setJsaDetailRow : undefined}
         />
       </div>
 
@@ -135,6 +131,10 @@ export default function CrudPage({ moduleKey, cfg, title, subtitle, onDataChange
           onClose={closeModal}
           onSubmit={handleSubmit}
         />
+      )}
+
+      {cfg.hasJsa && jsaDetailRow && (
+        <JsaDetailModal permit={jsaDetailRow} onClose={() => setJsaDetailRow(null)} />
       )}
     </>
   );

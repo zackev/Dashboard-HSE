@@ -3,7 +3,6 @@
 Dashboard HSE (Health, Safety, Environment) dengan CRUD lengkap untuk 8 modul.
 
 **Stack:**
-
 - **Frontend:** React + Vite + Tailwind CSS (folder `frontend/`)
 - **Backend:** Node.js + Express, penyimpanan file JSON (folder root — `db/`, `routes/`, `server.js`)
 - Dibuat berlapis (frontend murni React yang fetch ke REST API) supaya backend Node ini bisa diganti Laravel nanti tanpa menyentuh frontend sama sekali.
@@ -98,7 +97,8 @@ hse-dashboard/
         ├── components/
         │   ├── Sidebar.jsx, Topbar.jsx, StatCard.jsx, Badge.jsx
         │   ├── DataTable.jsx  # Tabel generik berbasis config kolom
-        │   ├── FormModal.jsx  # Modal form generik (text/select/textarea/number/date/file)
+        │   ├── FormModal.jsx  # Modal form generik (text/select/textarea/number/date/file/computed/JSA editor)
+        │   ├── JsaDetailModal.jsx # Modal read-only: detail lengkap JSA saat kolom JSA di tabel diklik
         │   └── CrudPage.jsx   # Halaman CRUD generik, dipakai 7 dari 8 modul
         └── pages/
             ├── Dashboard.jsx           # Stat cards + chart (Recharts)
@@ -106,7 +106,6 @@ hse-dashboard/
 ```
 
 **Menambah modul baru** cukup:
-
 1. Tambah endpoint di `routes/` (atau pakai `crudFactory.js` kalau CRUD standar).
 2. Tambah 1 entry di `frontend/src/config/modules.jsx` (field form + kolom tabel).
 3. Tambah 1 baris di `NAV_GROUPS` (sidebar) dan `VIEW_META` (judul halaman), lalu 1 `<Route>` di `App.jsx`.
@@ -118,17 +117,16 @@ dapat tabel & form lewat `CrudPage` + `DataTable` + `FormModal`.
 
 Modul dengan CRUD generik (`incidents`, `inspections`, `trainings`, `capa`, `permits`, `kpis`):
 
-| Method | Endpoint           | Keterangan                          |
-| ------ | ------------------ | ----------------------------------- |
-| GET    | `/api/<modul>`     | List semua data (`?q=` cari)        |
-| GET    | `/api/<modul>/:id` | Detail satu data                    |
-| POST   | `/api/<modul>`     | Buat data baru                      |
-| PUT    | `/api/<modul>/:id` | Update data                         |
-| DELETE | `/api/<modul>/:id` | Hapus data                          |
-| GET    | `/api/stats`       | Ringkasan statistik untuk dashboard |
+| Method | Endpoint                 | Keterangan                          |
+|--------|---------------------------|--------------------------------------|
+| GET    | `/api/<modul>`            | List semua data (`?q=` cari)         |
+| GET    | `/api/<modul>/:id`        | Detail satu data                    |
+| POST   | `/api/<modul>`            | Buat data baru                      |
+| PUT    | `/api/<modul>/:id`        | Update data                         |
+| DELETE | `/api/<modul>/:id`        | Hapus data                          |
+| GET    | `/api/stats`              | Ringkasan statistik untuk dashboard |
 
 Dua modul punya perilaku khusus:
-
 - **`/api/hse_performance`** — data **harian** (per tanggal). Man-Hour dihitung otomatis oleh server (`total_workers × working_hours`), tidak diinput manual. Response setiap baris disertai field hasil hitung: `man_hours_today`, `man_hours_cumulative`, `total_recordable_cases`, `fr`, `sr`, `trir`, `ltif` (4 indikator terakhir dihitung dari angka **kumulatif**, bukan cuma data hari itu).
 - **`/api/permits`** (Ijin Kerja) — wajib menyertakan `jsa` (array Job Safety Analysis) berisi minimal 1 baris dengan `step` (Langkah Kerja) terisi, kalau tidak server menolak dengan `400`.
 - **`/api/documents`** — `POST` dan `PUT` menerima `multipart/form-data` (bukan JSON) karena ada field upload file (`file`). Response menyertakan `file_name` dan `file_path` (bisa diunduh langsung lewat `/uploads/<nama file>`).
@@ -150,15 +148,14 @@ Setiap baris juga punya **Man-Hour Kumulatif** — akumulasi berjalan (running t
 
 ## Perhitungan SR, FR, TRIR, LTIF (berbasis kumulatif)
 
-| Indikator                                 | Rumus                                                             | Basis                                                      |
-| ----------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------- |
-| **FR** (Frequency Rate)                   | (Kumulatif Lost Time Incident × 1.000.000) ÷ Kumulatif Man-Hour   | 1.000.000 jam kerja (konvensi ILO / Permenaker No. 5/2018) |
-| **SR** (Severity Rate)                    | (Kumulatif Jumlah Hari Hilang × 1.000.000) ÷ Kumulatif Man-Hour   | 1.000.000 jam kerja                                        |
-| **TRIR** (Total Recordable Incident Rate) | (Kumulatif Total Recordable Cases × 200.000) ÷ Kumulatif Man-Hour | 200.000 jam kerja (konvensi OSHA, setara 100 pekerja)      |
-| **LTIF** (Lost Time Injury Frequency)     | (Kumulatif Lost Time Incident × 1.000.000) ÷ Kumulatif Man-Hour   | 1.000.000 jam kerja                                        |
+| Indikator | Rumus | Basis |
+|-----------|-------|-------|
+| **FR** (Frequency Rate) | (Kumulatif Lost Time Incident × 1.000.000) ÷ Kumulatif Man-Hour | 1.000.000 jam kerja (konvensi ILO / Permenaker No. 5/2018) |
+| **SR** (Severity Rate) | (Kumulatif Jumlah Hari Hilang × 1.000.000) ÷ Kumulatif Man-Hour | 1.000.000 jam kerja |
+| **TRIR** (Total Recordable Incident Rate) | (Kumulatif Total Recordable Cases × 200.000) ÷ Kumulatif Man-Hour | 200.000 jam kerja (konvensi OSHA, setara 100 pekerja) |
+| **LTIF** (Lost Time Injury Frequency) | (Kumulatif Lost Time Incident × 1.000.000) ÷ Kumulatif Man-Hour | 1.000.000 jam kerja |
 
 Catatan:
-
 - Dihitung dari angka **kumulatif**, bukan data satu hari saja — ini praktik standar pelaporan HSE karena man-hour satu hari (ratusan) terlalu kecil untuk basis per-1.000.000/200.000 jam kerja.
 - **Total Recordable Cases** = Medical Treatment Case + Restricted Work Case + Lost Time Incident + Fatality (First Aid Case & Near Miss tidak dihitung sebagai recordable, sesuai konvensi umum).
 - **LTIF** memakai rumus yang sama dengan **FR** karena keduanya mengacu ke metrik yang sama (frekuensi kecelakaan hilang waktu kerja); ditampilkan sebagai dua kartu terpisah karena istilahnya lazim dipakai berbeda dalam laporan HSE Indonesia.
@@ -173,6 +170,8 @@ Sebelum ijin kerja bisa disimpan/diajukan, form Ijin Kerja mewajibkan pengisian 
 3. **Langkah Pengendalian**
 
 Minimal 1 baris dengan "Langkah Kerja" terisi wajib ada — divalidasi baik di frontend (sebelum submit) maupun di backend (`routes/permits.js`, menolak dengan HTTP 400 kalau kosong). Data JSA disimpan sebagai array nested di dalam record permit (`permit.jsa`).
+
+Di tabel Ijin Kerja, kolom **JSA** menampilkan jumlah langkah (mis. "3 langkah") sebagai tombol — klik untuk membuka detail lengkap semua baris JSA (Langkah Kerja, Potensi Bahaya & Risiko, Langkah Pengendalian) dalam modal read-only (`frontend/src/components/JsaDetailModal.jsx`), tanpa perlu masuk ke mode edit.
 
 ## Rencana Migrasi ke Laravel
 
