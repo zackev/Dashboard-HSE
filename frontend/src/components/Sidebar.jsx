@@ -9,8 +9,13 @@ import {
   FileCheck2,
   Target,
   FileText,
+  Settings as SettingsIcon,
+  LogOut,
 } from "lucide-react";
 import { NAV_GROUPS } from "../config/modules.jsx";
+import ThemeToggle from "./ThemeToggle.jsx";
+import NotificationBell from "./NotificationBell.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const ICONS = {
   dashboard: LayoutDashboard,
@@ -22,100 +27,95 @@ const ICONS = {
   permits: FileCheck2,
   kpis: Target,
   documents: FileText,
+  settings: SettingsIcon,
 };
 
 export default function Sidebar({ counts }) {
+  const { user, hasPermission, logout } = useAuth();
+
   return (
-    <aside
-      className="sticky top-0 flex h-screen w-[250px] flex-col
-      bg-[#1F3B5C] border-r border-[#29496d]
-      px-3.5 py-5
-      text-white
-      max-md:static max-md:h-auto max-md:w-full"
-    >
-      <div className="mb-5 flex items-center gap-3 border-b border-white/10 pb-5">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-orange shadow-md">
-          <Activity size={20} className="text-white" />
+    <aside className="sticky top-0 flex h-screen w-[250px] flex-col bg-[#1F3B5C] to-bg px-3.5 py-5 max-md:static max-md:h-auto max-md:w-full">
+      <div className="hazard-divider mb-4 flex items-center justify-between gap-2.5 border-b-[3px] pb-5">
+        <div className="flex items-center gap-2.5">
+          <div className="h-[30px] w-[30px] flex-shrink-0 rounded-[7px] bg-gradient-to-br from-brand-orange to-brand-yellow" />
+          <div>
+            <span className="block text-[15px] font-extrabold tracking-wide">
+              HSE COMMAND
+            </span>
+            <span className="block text-[10.5px] text-muted">
+              Health &middot; Safety &middot; Environment
+            </span>
+          </div>
         </div>
-
-        <div>
-          <span className="block text-[15px] font-extrabold tracking-wide text-white">
-            HSE COMMAND
-          </span>
-
-          <span className="block text-[10.5px] text-blue-100">
-            Health &middot; Safety &middot; Environment
-          </span>
-        </div>
+        <NotificationBell />
       </div>
 
       <nav className="flex flex-1 flex-col gap-1 max-md:flex-row max-md:flex-wrap">
-        {NAV_GROUPS.map((group, gi) => (
-          <div key={gi}>
-            {group.title && (
-              <div className="px-3 pb-1 pt-3.5 text-[10px] font-extrabold uppercase tracking-wide text-blue-200/70">
-                {group.title}
-              </div>
-            )}
+        {NAV_GROUPS.map((group, gi) => {
+          const visibleItems = group.items.filter(
+            (item) => hasPermission(item.permission) || (item.altPermission && hasPermission(item.altPermission))
+          );
+          if (visibleItems.length === 0) return null;
 
-            {group.items.map((item) => {
-              const Icon = ICONS[item.key];
-
-              const to =
-                item.key === "dashboard"
-                  ? "/"
-                  : `/${item.key.replace("_", "-")}`;
-
-              return (
-                <NavLink
-                  key={item.key}
-                  to={to}
-                  end={item.key === "dashboard"}
-                  className={({ isActive }) =>
-                    `flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13.5px] font-semibold transition-all duration-200 ${
-                      isActive
-                        ? "bg-[#2563EB] text-white shadow"
-                        : "text-blue-100 hover:bg-[#2B4F78] hover:text-white"
-                    }`
-                  }
-                >
-                  <Icon size={18} />
-
-                  <span>{item.label}</span>
-
-                  {item.key !== "dashboard" && (
-                    <span
-                      className="
-                      ml-auto
-                      rounded-full
-                      bg-white/15
-                      px-2
-                      py-0.5
-                      text-[11px]
-                      font-bold
-                      text-white
-                      "
-                    >
-                      {counts[item.key] ?? 0}
-                    </span>
-                  )}
-                </NavLink>
-              );
-            })}
-          </div>
-        ))}
+          return (
+            <div key={gi}>
+              {group.title && (
+                <div className="px-3 pb-1 pt-3.5 text-[10px] font-extrabold uppercase tracking-wide text-muted opacity-70">
+                  {group.title}
+                </div>
+              )}
+              {visibleItems.map((item) => {
+                const Icon = ICONS[item.key];
+                const to =
+                  item.key === "dashboard"
+                    ? "/"
+                    : `/${item.key.replace("_", "-")}`;
+                const showCount = item.key !== "dashboard" && item.key !== "settings" && counts[item.key] !== undefined;
+                return (
+                  <NavLink
+                    key={item.key}
+                    to={to}
+                    end={item.key === "dashboard"}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2.5 rounded-[10px] px-3 py-2.5 text-[13.5px] font-semibold transition ${
+                        isActive
+                          ? "bg-brand-orangedim text-brand-yellow"
+                          : "text-muted hover:bg-surface hover:text-ink"
+                      }`
+                    }
+                  >
+                    <Icon size={18} />
+                    <span>{item.label}</span>
+                    {showCount && (
+                      <span className="ml-auto rounded-full bg-surface2 px-1.5 py-px text-[11px] font-bold text-muted">
+                        {counts[item.key] ?? 0}
+                      </span>
+                    )}
+                  </NavLink>
+                );
+              })}
+            </div>
+          );
+        })}
       </nav>
 
-      {/*
-      <div className="mt-4 border-t border-white/10 pt-4">
-        <div className="text-xs font-semibold text-white">
-          HSE Dashboard
-        </div>
-        <div className="text-[11px] text-blue-200">
-          React + Vite + Express
-        </div>
+      <div className="mt-2.5 flex flex-col gap-2.5 border-t border-border pt-3.5">
+        <ThemeToggle />
+        {user && (
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-surface2 text-xs font-bold">
+              {user.name?.[0]?.toUpperCase() || '?'}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-xs font-bold">{user.name}</div>
+              <div className="truncate text-[10.5px] text-muted">{user.role?.name}</div>
+            </div>
+            <button className="btn-icon" title="Keluar" onClick={logout}>
+              <LogOut size={14} />
+            </button>
+          </div>
+        )}
       </div>
-      */}
     </aside>
   );
 }

@@ -6,7 +6,7 @@ import DataTable from '../components/DataTable.jsx';
 import FormModal from '../components/FormModal.jsx';
 import JsaDetailModal from '../components/JsaDetailModal.jsx';
 
-export default function CrudPage({ moduleKey, cfg, title, subtitle, onDataChanged, extraTop }) {
+export default function CrudPage({ moduleKey, cfg, title, subtitle, onDataChanged, extraTop, enableApproval }) {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -88,6 +88,30 @@ export default function CrudPage({ moduleKey, cfg, title, subtitle, onDataChange
     }
   }
 
+  async function handleApprove(row) {
+    if (!window.confirm(`Setujui ijin kerja "${row.permit_no}"?`)) return;
+    try {
+      await api.postJson(`/${moduleKey}/${row.id}/approve`, { status: 'Approved' });
+      showToast('Ijin kerja disetujui.');
+      load(search);
+      onDataChanged?.();
+    } catch (err) {
+      showToast(err.message, true);
+    }
+  }
+
+  async function handleReject(row) {
+    const reason = window.prompt(`Alasan penolakan ijin kerja "${row.permit_no}" (opsional):`) ?? '';
+    try {
+      await api.postJson(`/${moduleKey}/${row.id}/reject`, { reason });
+      showToast('Ijin kerja ditolak.');
+      load(search);
+      onDataChanged?.();
+    } catch (err) {
+      showToast(err.message, true);
+    }
+  }
+
   async function handleDelete(row) {
     const label = row.title || row.kpi_name || row.permit_no || row.date || 'data ini';
     if (!window.confirm(`Hapus "${label}"? Tindakan ini tidak bisa dibatalkan.`)) return;
@@ -120,6 +144,8 @@ export default function CrudPage({ moduleKey, cfg, title, subtitle, onDataChange
           onEdit={openEdit}
           onDelete={handleDelete}
           onJsaClick={cfg.hasJsa ? setJsaDetailRow : undefined}
+          onApprove={enableApproval ? handleApprove : undefined}
+          onReject={enableApproval ? handleReject : undefined}
         />
       </div>
 

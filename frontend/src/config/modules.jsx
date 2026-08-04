@@ -119,8 +119,6 @@ export const MODULES = {
       { key: 'property_damage', label: 'Property Damage' },
       { key: 'lost_time_incident', label: 'LTI' },
       { key: 'fatality', label: 'Fatality' },
-      { key: 'fr', label: 'FR (kumulatif)', numeric: true },
-      { key: 'sr', label: 'SR (kumulatif)', numeric: true },
       { key: 'trir', label: 'TRIR (kumulatif)', numeric: true },
       { key: 'ltif', label: 'LTIF (kumulatif)', numeric: true }
     ],
@@ -145,7 +143,6 @@ export const MODULES = {
       { key: 'restricted_work_case', label: 'Restricted Work Case (RWC)', type: 'number' },
       { key: 'property_damage', label: 'Property Damage', type: 'number' },
       { key: 'lost_time_incident', label: 'Lost Time Incident (LTI)', type: 'number' },
-      { key: 'lost_days', label: 'Jumlah Hari Hilang (untuk SR)', type: 'number' },
       { key: 'fatality', label: 'Fatality', type: 'number' },
       { key: 'notes', label: 'Catatan', type: 'textarea' }
     ]
@@ -231,26 +228,46 @@ export const MODULES = {
   }
 };
 
+// `permission` = key permission backend yang harus dimiliki user supaya menu
+// ini tampil di sidebar (lihat AuthContext.hasPermission). Route yang sama
+// (mis. /permits, /documents) dirender berbeda tergantung permission yang
+// dimiliki — lihat App.jsx.
 export const NAV_GROUPS = [
   {
     items: [
-      { key: 'dashboard', label: 'Dashboard' },
-      { key: 'incidents', label: 'Incidents' },
-      { key: 'inspections', label: 'Inspections' },
-      { key: 'trainings', label: 'Trainings' },
-      { key: 'capa', label: 'CAPA' }
+      { key: 'dashboard', label: 'Dashboard', permission: 'dashboard' },
+      { key: 'incidents', label: 'Incidents', permission: 'incidents' },
+      { key: 'inspections', label: 'Inspections', permission: 'inspections' },
+      { key: 'trainings', label: 'Trainings', permission: 'trainings' },
+      { key: 'capa', label: 'CAPA', permission: 'capa' }
     ]
   },
   {
     title: 'Performa & Kepatuhan',
     items: [
-      { key: 'hse_performance', label: 'HSE Performance' },
-      { key: 'permits', label: 'Ijin Kerja' },
-      { key: 'kpis', label: 'KPI' },
-      { key: 'documents', label: 'Document' }
+      { key: 'hse_performance', label: 'HSE Performance', permission: 'hse_performance' },
+      { key: 'permits', label: 'Ijin Kerja', permission: 'permits', altPermission: 'permits_own' },
+      { key: 'kpis', label: 'KPI', permission: 'kpis' },
+      { key: 'documents', label: 'Document', permission: 'documents', altPermission: 'documents_sop' }
+    ]
+  },
+  {
+    title: 'Administrasi',
+    items: [
+      { key: 'settings', label: 'Settings', permission: 'settings' }
     ]
   }
 ];
+
+/**
+ * Field form Ijin Kerja untuk EMPLOYEE (bukan admin): status, "disetujui
+ * oleh", dan "diajukan oleh" dihilangkan dari form karena backend yang
+ * mengisi otomatis (status selalu "Submitted", requested_by = user login).
+ */
+export function getPermitFormFields(isAdmin) {
+  if (isAdmin) return MODULES.permits.fields;
+  return MODULES.permits.fields.filter((f) => !['requested_by', 'approved_by', 'status'].includes(f.key));
+}
 
 export const VIEW_META = {
   dashboard: ['Dashboard', 'Ringkasan kondisi K3 hari ini'],

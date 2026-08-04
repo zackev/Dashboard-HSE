@@ -1,42 +1,40 @@
 /** @type {import('tailwindcss').Config} */
+
+// Setiap warna dibaca dari CSS variable (didefinisikan di src/index.css untuk
+// tema dark & light). Format "rgb(var(--x) / <alpha-value>)" ini yang bikin
+// utility seperti bg-good/15 (opacity) tetap jalan normal.
+function themeColor(name) {
+  return `rgb(var(${name}) / <alpha-value>)`;
+}
+
 export default {
-  content: ["./index.html", "./src/**/*.{js,jsx}"],
+  content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
       colors: {
-        bg: "#f5f7fa",
-        surface: "#ffffff",
-        surface2: "#eef2f7",
-        border: "#d9e2ec",
-        ink: "#1f2937",
-        muted: "#6b7280",
-
+        bg: themeColor('--color-bg'),
+        surface: themeColor('--color-surface'),
+        surface2: themeColor('--color-surface2'),
+        border: themeColor('--color-border'),
+        ink: themeColor('--color-ink'),
+        muted: themeColor('--color-muted'),
         brand: {
-          orange: "#ff6a13",
-          orangedim: "#ffd9c4",
-          yellow: "#f2c230",
+          orange: themeColor('--color-orange'),
+          orangedim: themeColor('--color-orangedim'),
+          yellow: themeColor('--color-yellow')
         },
-
-        info: "#2563eb",
-        good: "#16a34a",
-        warn: "#f59e0b",
-        bad: "#dc2626",
+        info: themeColor('--color-info'),
+        good: themeColor('--color-good'),
+        warn: themeColor('--color-warn'),
+        bad: themeColor('--color-bad')
       },
-
       fontFamily: {
-        mono: [
-          "ui-monospace",
-          "SFMono-Regular",
-          "Consolas",
-          "Liberation Mono",
-          "monospace",
-        ],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'monospace']
       },
-
       boxShadow: {
-        modal: "0 20px 60px rgba(0,0,0,.15)",
-      },
-    },
+        modal: '0 20px 60px rgba(0,0,0,.5)'
+      }
+    }
   },
-  plugins: [],
+  plugins: []
 };

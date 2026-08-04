@@ -1,4 +1,4 @@
-import { Pencil, Trash2, ListChecks } from 'lucide-react';
+import { Pencil, Trash2, ListChecks, Check, X } from 'lucide-react';
 import Badge from './Badge.jsx';
 
 function formatNumber(n) {
@@ -54,7 +54,7 @@ function renderCell(col, row, onJsaClick) {
   return val === '' || val === undefined || val === null ? '-' : val;
 }
 
-export default function DataTable({ cfg, rows, loading, onEdit, onDelete, onJsaClick }) {
+export default function DataTable({ cfg, rows, loading, onEdit, onDelete, onJsaClick, onApprove, onReject }) {
   const colCount = cfg.columns.length + 1;
 
   return (
@@ -102,7 +102,25 @@ export default function DataTable({ cfg, rows, loading, onEdit, onDelete, onJsaC
                   </td>
                 ))}
                 <td className="border-b border-border px-2.5 py-2.5 align-top">
-                  <div className="flex gap-1.5">
+                  <div className="flex flex-wrap gap-1.5">
+                    {onApprove && row.status === 'Submitted' && (
+                      <button
+                        className="btn-icon border-good/40 text-good hover:bg-good/10"
+                        title="Setujui"
+                        onClick={() => onApprove(row)}
+                      >
+                        <Check size={14} />
+                      </button>
+                    )}
+                    {onReject && row.status === 'Submitted' && (
+                      <button
+                        className="btn-icon btn-icon-danger"
+                        title="Tolak"
+                        onClick={() => onReject(row)}
+                      >
+                        <X size={14} />
+                      </button>
+                    )}
                     <button className="btn-icon" title="Edit" onClick={() => onEdit(row)}>
                       <Pencil size={14} />
                     </button>

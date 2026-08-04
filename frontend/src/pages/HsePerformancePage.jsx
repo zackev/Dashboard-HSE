@@ -20,13 +20,9 @@ export default function HsePerformancePage({ onDataChanged }) {
             {' '}Cukup input jumlah tenaga kerja &amp; jam kerja, Man-Hour langsung muncul otomatis — tidak perlu dihitung manual.
           </p>
           <p className="text-[12.5px] leading-relaxed text-muted">
-            <strong className="font-mono text-brand-yellow">Man-Hour Kumulatif</strong> = akumulasi Man-Hour dari tanggal paling awal yang tercatat sampai baris tersebut (kumulatif harian, terus bertambah).
-            {' '}FR, SR, TRIR, dan LTIF dihitung dari angka kumulatif ini, bukan cuma data satu hari:{' '}
-            <strong className="font-mono text-brand-yellow">FR</strong> = (Kumulatif LTI &times; 1.000.000) &divide; Kumulatif Man-Hour &middot;{' '}
-            <strong className="font-mono text-brand-yellow">SR</strong> = (Kumulatif Hari Hilang &times; 1.000.000) &divide; Kumulatif Man-Hour &middot;{' '}
-            <strong className="font-mono text-brand-yellow">TRIR</strong> = (Kumulatif Recordable Cases &times; 200.000) &divide; Kumulatif Man-Hour &middot;{' '}
-            <strong className="font-mono text-brand-yellow">LTIF</strong> = sama dengan FR.
-            {' '}Recordable Cases = MTC + RWC + LTI + Fatality.
+            <strong className="font-mono text-brand-yellow">Man-Hour Kumulatif</strong> = akumulasi Man-Hour dari tanggal paling awal yang tercatat sampai baris tersebut (terus bertambah setiap hari baru ditambahkan).
+            {' '}<strong className="font-mono text-brand-yellow">TRIR</strong> = ((Kumulatif Near Miss + FAC + MTC + RWC + Property Damage) &divide; Kumulatif Man-Hour) &times; 200.000.
+            {' '}<strong className="font-mono text-brand-yellow">LTIF</strong> = ((Kumulatif LTI + Fatality) &divide; Kumulatif Man-Hour) &times; 1.000.000.
           </p>
         </div>
       }

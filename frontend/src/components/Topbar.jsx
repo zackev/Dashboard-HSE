@@ -7,6 +7,7 @@ export default function Topbar({
   onAdd,
   search,
   onSearchChange,
+  right,
 }) {
   return (
     <header className="mb-5 flex flex-wrap items-start justify-between gap-5">
@@ -27,7 +28,7 @@ export default function Topbar({
             />
           </div>
         )}
-        {showAdd && (
+        {showAdd && onAdd && (
           <button
             className="btn btn-primary whitespace-nowrap !text-white"
             onClick={onAdd}
@@ -35,6 +36,7 @@ export default function Topbar({
             + Tambah Data
           </button>
         )}
+        {right}
       </div>
     </header>
   );

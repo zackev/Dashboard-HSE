@@ -2,11 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   Tema Dark / Light
+   Semua warna didefinisikan sebagai variable RGB "r g b" (tanpa fungsi rgb()),
+   supaya Tailwind bisa pasang alpha channel sendiri (mis. bg-good/15).
+   Default (tanpa class apa pun di <html>) = dark. Tambah class "light" di
+   <html> untuk beralih ke tema terang — lihat context/ThemeContext.jsx.
+   ========================================================================== */
+:root {
+  --color-bg: 18 22 26;
+  --color-surface: 27 33 38;
+  --color-surface2: 34 41 50;
+  --color-border: 43 51 60;
+  --color-ink: 233 237 241;
+  --color-muted: 141 152 163;
+
+  --color-orange: 255 106 19;
+  --color-orangedim: 122 58 23;
+  --color-yellow: 242 194 48;
+
+  --color-info: 77 159 236;
+  --color-good: 63 178 127;
+  --color-warn: 242 169 59;
+  --color-bad: 229 72 77;
+}
+
+html.light {
+  --color-bg: 246 247 249;
+  --color-surface: 255 255 255;
+  --color-surface2: 237 240 243;
+  --color-border: 223 227 232;
+  --color-ink: 23 28 33;
+  --color-muted: 95 106 117;
+
+  /* --color-orange sengaja TIDAK diubah: tombol primary butuh oranye cerah
+     yang sama di kedua tema supaya teks gelap di atasnya tetap kontras. */
+  --color-orangedim: 255 231 214;
+  --color-yellow: 176 90 10;
+
+  --color-info: 33 111 191;
+  --color-good: 31 138 96;
+  --color-warn: 176 108 8;
+  --color-bad: 197 48 53;
+}
+
 @layer base {
   html, body, #root { height: 100%; }
   body {
     @apply bg-bg text-ink;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    transition: background-color .2s ease, color .2s ease;
   }
   ::selection { background: theme('colors.brand.orange'); color: #1c0e00; }
 }
@@ -19,7 +64,7 @@
     @apply bg-brand-orange text-[#1c0e00] hover:brightness-110;
   }
   .btn-ghost {
-    @apply bg-surface2 text-ink hover:brightness-125;
+    @apply bg-surface2 text-ink hover:brightness-95;
   }
   .btn-icon {
     @apply inline-flex h-[30px] w-[30px] items-center justify-center rounded-[7px] border border-border bg-surface2 text-muted hover:text-ink;
@@ -41,7 +86,11 @@
   }
 }
 
-/* Hazard-stripe accent used sparingly under the sidebar brand mark */
 .hazard-divider {
-  border-image: repeating-linear-gradient(45deg, #f2c230 0 10px, #1a1a1a 10px 20px) 1;
+  border-image: repeating-linear-gradient(45deg, rgb(var(--color-yellow)) 0 10px, rgb(var(--color-bg)) 10px 20px) 1;
+}
+
+/* Elemen & container yang ikut bertransisi halus saat tema berganti */
+.theme-transition, .theme-transition * {
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
 }

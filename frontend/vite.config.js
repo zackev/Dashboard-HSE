@@ -7,11 +7,13 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // Saat development, Vite jalan di :5173 dan Express (API) di :3000.
-      // Proxy ini supaya frontend bisa fetch('/api/...') dan fetch('/uploads/...')
-      // tanpa perlu CORS / tanpa hardcode http://localhost:3000 di kode.
-      '/api': 'http://localhost:3000',
-      '/uploads': 'http://localhost:3000'
+      // Vite jalan di :5173, Laravel API di :8000. Proxy ini membuat
+      // permintaan dari browser TERLIHAT same-origin (localhost:5173),
+      // jadi cookie sesi Sanctum otomatis tersimpan/terkirim tanpa
+      // konfigurasi CORS/credentials tambahan di sisi frontend.
+      '/api': 'http://localhost:8000',
+      '/sanctum': 'http://localhost:8000',
+      '/storage': 'http://localhost:8000'
     }
   },
   build: {
