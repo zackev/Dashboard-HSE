@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return response()->json([
-        'message' => 'HSE Dashboard API aktif. Frontend React berjalan terpisah (lihat README).',
-    ]);
+    return file_get_contents(public_path('index.html'));
 });
+
+Route::get('/{any}', function () {
+    return file_get_contents(public_path('index.html'));
+})->where('any', '.*');
