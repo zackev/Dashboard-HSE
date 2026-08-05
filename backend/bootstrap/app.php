@@ -13,20 +13,20 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-->withMiddleware(function (Middleware $middleware) {
-    // Lets Sanctum authenticate SPA requests (React) via cookie session
-    $middleware->statefulApi();
+    ->withMiddleware(function (Middleware $middleware) {
+        // Lets Sanctum authenticate SPA requests (React) via cookie session
+        $middleware->statefulApi();
 
-    // Jangan redirect ke route('login') untuk request yang belum login
-    $middleware->redirectGuestsTo(function () {
-        return null;
-    });
+        // Jangan redirect ke route('login') untuk request yang belum login
+        $middleware->redirectGuestsTo(function () {
+            return null;
+        });
 
-    $middleware->alias([
-        'permission' => EnsurePermission::class,
-        'permission.any' => EnsureAnyPermission::class,
-    ]);
-})
+        $middleware->alias([
+            'permission' => EnsurePermission::class,
+            'permission.any' => EnsureAnyPermission::class,
+        ]);
+    })
 
 
     ->withExceptions(function (Exceptions $exceptions) {

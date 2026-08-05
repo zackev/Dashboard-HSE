@@ -6,5 +6,8 @@ uploads/
 # Laravel
 backend/.env
 backend/vendor/
-backend/storage/logs/
-backend/bootstrap/cache/
+backend/storage/logs/*
+
+# Jangan ignore folder cache, hanya isinya
+backend/bootstrap/cache/*
+!backend/bootstrap/cache/.gitkeep
