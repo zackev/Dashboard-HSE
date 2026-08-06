@@ -30,9 +30,13 @@ class AuthController extends Controller
             ]);
         }
 
-        $request->session()->regenerate();
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
 
-        return response()->json(['data' => $this->formatUser($user)]);
+        return response()->json([
+            'data' => $this->formatUser($user)
+        ]);
     }
 
     public function logout(Request $request)
