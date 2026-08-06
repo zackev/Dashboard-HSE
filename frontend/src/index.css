@@ -25,6 +25,10 @@
   --color-good: 63 178 127;
   --color-warn: 242 169 59;
   --color-bad: 229 72 77;
+
+  --color-bg: 18 22 26;
+  --color-sidebar: 31 59 92;
+  --color-surface: 27 33 38;
 }
 
 html.light {
@@ -44,16 +48,34 @@ html.light {
   --color-good: 31 138 96;
   --color-warn: 176 108 8;
   --color-bad: 197 48 53;
+
+  --color-bg: 246 247 249;
+  --color-sidebar: 31 59 92;
+  --color-surface: 255 255 255;
 }
 
 @layer base {
-  html, body, #root { height: 100%; }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
   body {
     @apply bg-bg text-ink;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    transition: background-color .2s ease, color .2s ease;
+    font-family:
+      system-ui,
+      -apple-system,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
-  ::selection { background: theme('colors.brand.orange'); color: #1c0e00; }
+  ::selection {
+    background: theme("colors.brand.orange");
+    color: #1c0e00;
+  }
 }
 
 @layer components {
@@ -87,10 +109,19 @@ html.light {
 }
 
 .hazard-divider {
-  border-image: repeating-linear-gradient(45deg, rgb(var(--color-yellow)) 0 10px, rgb(var(--color-bg)) 10px 20px) 1;
+  border-image: repeating-linear-gradient(
+      45deg,
+      rgb(var(--color-yellow)) 0 10px,
+      rgb(var(--color-bg)) 10px 20px
+    )
+    1;
 }
 
 /* Elemen & container yang ikut bertransisi halus saat tema berganti */
-.theme-transition, .theme-transition * {
-  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+.theme-transition,
+.theme-transition * {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }

@@ -34,7 +34,7 @@ export default function Sidebar({ counts }) {
   const { user, hasPermission, logout } = useAuth();
 
   return (
-    <aside className="sticky top-0 flex h-screen w-[250px] flex-col bg-[#1F3B5C] to-bg px-3.5 py-5 max-md:static max-md:h-auto max-md:w-full">
+    <aside className="sticky top-0 flex h-screen w-[250px] flex-col bg-sidebar to-bg px-3.5 py-5 max-md:static max-md:h-auto max-md:w-full">
       <div className="hazard-divider mb-4 flex items-center justify-between gap-2.5 border-b-[3px] pb-5">
         <div className="flex items-center gap-2.5">
           <div className="h-[30px] w-[30px] flex-shrink-0 rounded-[7px] bg-gradient-to-br from-brand-orange to-brand-yellow" />
@@ -53,7 +53,9 @@ export default function Sidebar({ counts }) {
       <nav className="flex flex-1 flex-col gap-1 max-md:flex-row max-md:flex-wrap">
         {NAV_GROUPS.map((group, gi) => {
           const visibleItems = group.items.filter(
-            (item) => hasPermission(item.permission) || (item.altPermission && hasPermission(item.altPermission))
+            (item) =>
+              hasPermission(item.permission) ||
+              (item.altPermission && hasPermission(item.altPermission)),
           );
           if (visibleItems.length === 0) return null;
 
@@ -70,7 +72,10 @@ export default function Sidebar({ counts }) {
                   item.key === "dashboard"
                     ? "/"
                     : `/${item.key.replace("_", "-")}`;
-                const showCount = item.key !== "dashboard" && item.key !== "settings" && counts[item.key] !== undefined;
+                const showCount =
+                  item.key !== "dashboard" &&
+                  item.key !== "settings" &&
+                  counts[item.key] !== undefined;
                 return (
                   <NavLink
                     key={item.key}
@@ -104,11 +109,13 @@ export default function Sidebar({ counts }) {
         {user && (
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-surface2 text-xs font-bold">
-              {user.name?.[0]?.toUpperCase() || '?'}
+              {user.name?.[0]?.toUpperCase() || "?"}
             </div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-xs font-bold">{user.name}</div>
-              <div className="truncate text-[10.5px] text-muted">{user.role?.name}</div>
+              <div className="truncate text-[10.5px] text-muted">
+                {user.role?.name}
+              </div>
             </div>
             <button className="btn-icon" title="Keluar" onClick={logout}>
               <LogOut size={14} />

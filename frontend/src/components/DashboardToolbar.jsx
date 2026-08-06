@@ -6,7 +6,12 @@ const EXPORT_FORMATS = [
   { value: "pdf", label: "PDF" },
 ];
 
-export default function DashboardToolbar({ filters, setFilters, onRefresh, onExport }) {
+export default function DashboardToolbar({
+  filters,
+  setFilters,
+  onRefresh,
+  onExport,
+}) {
   const isCustom = filters.period === "custom";
 
   return (
@@ -16,7 +21,7 @@ export default function DashboardToolbar({ filters, setFilters, onRefresh, onExp
         <Calendar size={16} />
 
         <select
-          className="bg-transparent text-sm outline-none"
+          className="bg-transparent text-sm text-ink outline-none"
           value={filters.period}
           onChange={(e) =>
             setFilters({
@@ -25,14 +30,30 @@ export default function DashboardToolbar({ filters, setFilters, onRefresh, onExp
             })
           }
         >
-          <option value="today">Today</option>
-          <option value="yesterday">Yesterday</option>
-          <option value="this_week">This Week</option>
-          <option value="last_week">Last Week</option>
-          <option value="this_month">This Month</option>
-          <option value="last_month">Last Month</option>
-          <option value="this_year">This Year</option>
-          <option value="custom">Custom Range...</option>
+          <option className="bg-surface text-ink" value="today">
+            Today
+          </option>
+          <option className="bg-surface text-ink" value="yesterday">
+            Yesterday
+          </option>
+          <option className="bg-surface text-ink" value="this_week">
+            This Week
+          </option>
+          <option className="bg-surface text-ink" value="last_week">
+            Last Week
+          </option>
+          <option className="bg-surface text-ink" value="this_month">
+            This Month
+          </option>
+          <option className="bg-surface text-ink" value="last_month">
+            Last Month
+          </option>
+          <option className="bg-surface text-ink" value="this_year">
+            This Year
+          </option>
+          <option className="bg-surface text-ink" value="custom">
+            Custom Range...
+          </option>
         </select>
       </div>
 
@@ -43,14 +64,18 @@ export default function DashboardToolbar({ filters, setFilters, onRefresh, onExp
             type="date"
             className="bg-transparent text-sm outline-none"
             value={filters.startDate || ""}
-            onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
+            onChange={(e) =>
+              setFilters({ ...filters, startDate: e.target.value })
+            }
           />
           <span className="text-muted">-</span>
           <input
             type="date"
-            className="bg-transparent text-sm outline-none"
+            className="bg-transparent text-sm text-ink outline-none"
             value={filters.endDate || ""}
-            onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+            onChange={(e) =>
+              setFilters({ ...filters, endDate: e.target.value })
+            }
           />
         </div>
       )}
@@ -68,7 +93,7 @@ export default function DashboardToolbar({ filters, setFilters, onRefresh, onExp
         <div className="flex items-center gap-2 rounded-lg bg-brand-orange px-3 py-2 text-sm font-medium text-white transition hover:opacity-90">
           <Download size={16} />
           <select
-            className="bg-transparent text-sm text-white outline-none [&>option]:text-ink"
+            className="bg-transparent text-sm text-white  outline-none [&>option]:text-ink"
             defaultValue=""
             onChange={(e) => {
               const format = e.target.value;

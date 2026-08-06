@@ -8,33 +8,40 @@ function themeColor(name) {
 }
 
 export default {
-  content: ['./index.html', './src/**/*.{js,jsx}'],
+  content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
       colors: {
-        bg: themeColor('--color-bg'),
-        surface: themeColor('--color-surface'),
-        surface2: themeColor('--color-surface2'),
-        border: themeColor('--color-border'),
-        ink: themeColor('--color-ink'),
-        muted: themeColor('--color-muted'),
+        bg: themeColor("--color-bg"),
+        surface: themeColor("--color-surface"),
+        surface2: themeColor("--color-surface2"),
+        border: themeColor("--color-border"),
+        ink: themeColor("--color-ink"),
+        muted: themeColor("--color-muted"),
+        sidebar: "rgb(var(--color-sidebar) / <alpha-value>)",
         brand: {
-          orange: themeColor('--color-orange'),
-          orangedim: themeColor('--color-orangedim'),
-          yellow: themeColor('--color-yellow')
+          orange: themeColor("--color-orange"),
+          orangedim: themeColor("--color-orangedim"),
+          yellow: themeColor("--color-yellow"),
         },
-        info: themeColor('--color-info'),
-        good: themeColor('--color-good'),
-        warn: themeColor('--color-warn'),
-        bad: themeColor('--color-bad')
+        info: themeColor("--color-info"),
+        good: themeColor("--color-good"),
+        warn: themeColor("--color-warn"),
+        bad: themeColor("--color-bad"),
       },
       fontFamily: {
-        mono: ['ui-monospace', 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'monospace']
+        mono: [
+          "ui-monospace",
+          "SFMono-Regular",
+          "Consolas",
+          "Liberation Mono",
+          "monospace",
+        ],
       },
       boxShadow: {
-        modal: '0 20px 60px rgba(0,0,0,.5)'
-      }
-    }
+        modal: "0 20px 60px rgba(0,0,0,.5)",
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 };
