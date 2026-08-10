@@ -10,6 +10,7 @@ use App\Notifications\PermitSubmitted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
+
 /**
  * Alur status `permits.status`:
  *   Submitted -> (admin approve) -> GM Review -> (gm approve) -> Approved
@@ -25,7 +26,14 @@ class PermitController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $query = Permit::with(['user:id,name', 'adminReviewer:id,name', 'gmReviewer:id,name'])->query();
+
+        // FIX: Permit::with() sudah menghasilkan Eloquent Builder,
+        // jadi tidak perlu memanggil ->query() lagi.
+        $query = Permit::with([
+            'user:id,name',
+            'adminReviewer:id,name',
+            'gmReviewer:id,name'
+        ]);
 
         $isAdmin = $user->hasPermission('permits');
         $isGm = $user->hasPermission('permits_gm');
@@ -37,8 +45,10 @@ class PermitController extends Controller
         if ($status = $request->query('status')) {
             $query->whereRaw('LOWER(status) = ?', [strtolower($status)]);
         }
+
         if ($q = $request->query('q')) {
-            $needle = '%'.strtolower($q).'%';
+            $needle = '%' . strtolower($q) . '%';
+
             $query->where(function ($sub) use ($needle) {
                 $sub->orWhereRaw('LOWER(permit_no) LIKE ?', [$needle])
                     ->orWhereRaw('LOWER(location) LIKE ?', [$needle])
@@ -47,19 +57,26 @@ class PermitController extends Controller
         }
 
         $rows = $query->orderBy('valid_from', 'desc')->get();
-        return response()->json(['data' => $rows, 'total' => $rows->count()]);
+
+        return response()->json([
+            'data' => $rows,
+            'total' => $rows->count()
+        ]);
     }
+
 
     /** Daftar pilihan tetap (klasifikasi & APD) untuk checkbox di form React. */
     public function formOptions()
     {
-        return response()->json(['data' => [
-            'work_classifications' => Permit::WORK_CLASSIFICATIONS,
-            'safety_equipment_groups' => Permit::SAFETY_EQUIPMENT_GROUPS,
-            'equipment_categories' => Permit::EQUIPMENT_CATEGORIES,
-        ]]);
+        return response()->json([
+            'data' => [
+                'work_classifications' => Permit::WORK_CLASSIFICATIONS,
+                'safety_equipment_groups' => Permit::SAFETY_EQUIPMENT_GROUPS,
+                'equipment_categories' => Permit::EQUIPMENT_CATEGORIES,
+            ]
+        ]);
     }
-
+    
     public function show(Request $request, int $id)
     {
         $row = Permit::with(['user:id,name', 'adminReviewer:id,name', 'gmReviewer:id,name', 'overtimes'])->find($id);
