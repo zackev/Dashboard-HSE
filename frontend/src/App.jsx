@@ -7,7 +7,10 @@ import HsePerformancePage from './pages/HsePerformancePage.jsx';
 import SopDocuments from './pages/SopDocuments.jsx';
 import Settings from './pages/Settings.jsx';
 import Login from './pages/Login.jsx';
-import { MODULES, VIEW_META, getPermitFormFields } from './config/modules.jsx';
+import { MODULES, VIEW_META } from './config/modules.jsx';
+import PermitListPage from './pages/PermitListPage.jsx';
+import PermitFormPage from './pages/PermitFormPage.jsx';
+import PermitDetailPage from './pages/PermitDetailPage.jsx';
 import { api } from './lib/api.js';
 import { useAuth } from './context/AuthContext.jsx';
 
@@ -58,6 +61,13 @@ function Guard({ need, altNeed, children }) {
   return ok ? children : <Navigate to="/" replace />;
 }
 
+/** Sama seperti Guard, tapi untuk Ijin Kerja yang punya 3 permission terkait sekaligus (Admin/GM/Pemohon). */
+function PermitsGuard({ children }) {
+  const { hasPermission } = useAuth();
+  const ok = hasPermission('permits') || hasPermission('permits_gm') || hasPermission('permits_own');
+  return ok ? children : <Navigate to="/" replace />;
+}
+
 export default function App() {
   const { user, hasPermission } = useAuth();
   const [counts, setCounts] = useState({});
@@ -66,7 +76,7 @@ export default function App() {
   const loadCounts = useCallback(async () => {
     if (!user) return;
     const visible = COUNTABLE_MODULES.filter((key) => {
-      if (key === 'permits') return hasPermission('permits') || hasPermission('permits_own');
+      if (key === 'permits') return hasPermission('permits') || hasPermission('permits_gm') || hasPermission('permits_own');
       if (key === 'documents') return hasPermission('documents'); // SOP employee tidak butuh badge angka
       return hasPermission(key);
     });
@@ -93,10 +103,9 @@ export default function App() {
     setRefreshKey((k) => k + 1);
   }, [loadCounts]);
 
-  const isAdmin = hasPermission('permits');
-  const permitsElement = isAdmin
-    ? simplePage('permits', bump, MODULES.permits, { enableApproval: true })
-    : simplePage('permits', bump, { ...MODULES.permits, fields: getPermitFormFields(false) });
+  // Ijin Kerja sekarang dedicated pages (bukan CrudPage generik lagi) -
+  // karena strukturnya sudah jauh lebih kompleks (multi-section form,
+  // approval 2 tingkat Admin->GM, cetak PDF, izin lembur).
 
   const documentsElement = hasPermission('documents')
     ? simplePage('documents', bump)
@@ -116,7 +125,10 @@ export default function App() {
           path="/hse-performance"
           element={<Guard need="hse_performance"><HsePerformancePage onDataChanged={bump} /></Guard>}
         />
-        <Route path="/permits" element={<Guard need="permits" altNeed="permits_own">{permitsElement}</Guard>} />
+        <Route path="/permits" element={<PermitsGuard><PermitListPage /></PermitsGuard>} />
+        <Route path="/permits/new" element={<Guard need="permits_own"><PermitFormPage /></Guard>} />
+        <Route path="/permits/:id/edit" element={<Guard need="permits_own"><PermitFormPage /></Guard>} />
+        <Route path="/permits/:id" element={<PermitsGuard><PermitDetailPage /></PermitsGuard>} />
         <Route path="/kpis" element={<Guard need="kpis">{simplePage('kpis', bump)}</Guard>} />
         <Route path="/documents" element={<Guard need="documents" altNeed="documents_sop">{documentsElement}</Guard>} />
         <Route path="/settings" element={<Guard need="settings"><Settings /></Guard>} />

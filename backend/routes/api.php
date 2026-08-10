@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\InspectionController;
 use App\Http\Controllers\Api\KpiController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PermitController;
+use App\Http\Controllers\Api\PermitOvertimeController;
 use App\Http\Controllers\Api\Settings\RoleController;
 use App\Http\Controllers\Api\Settings\UserController;
 use App\Http\Controllers\Api\TrainingController;
@@ -37,7 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // (nama endpoint /stats dipertahankan sama seperti versi lama supaya
     // frontend React yang sudah ada tidak perlu diubah)
     Route::get('/stats', [DashboardController::class, 'index']);
-    Route::get('/stats/export', [DashboardController::class, 'export']);
 
     // Notifikasi (bell icon)
     Route::get('/notifications', [NotificationController::class, 'index']);
@@ -105,16 +105,32 @@ Route::middleware('auth:sanctum')->group(function () {
     // 'permits') melihat semua, employee (permission 'permits_own') tetap
     // boleh akses endpoint yang sama tapi otomatis di-scope ke user_id
     // miliknya sendiri di dalam PermitController.
-    Route::middleware('permission.any:permits,permits_own')->group(function () {
+    // Ijin Kerja: admin (permission 'permits'), GM (permission 'permits_gm'),
+    // dan employee (permission 'permits_own') semua akses endpoint yang sama;
+    // scoping detail (lihat semua vs cuma milik sendiri) ditangani di
+    // PermitController itu sendiri.
+    Route::get('permits/form-options', [PermitController::class, 'formOptions']);
+    Route::middleware('permission.any:permits,permits_gm,permits_own')->group(function () {
         Route::get('permits', [PermitController::class, 'index']);
         Route::get('permits/{id}', [PermitController::class, 'show']);
         Route::post('permits', [PermitController::class, 'store']);
         Route::put('permits/{id}', [PermitController::class, 'update']);
         Route::delete('permits/{id}', [PermitController::class, 'destroy']);
+        Route::get('permits/{id}/print', [PermitController::class, 'print']);
+
+        // Izin Lembur - pemohon ajukan, admin & GM review (dicek permission
+        // di dalam controller masing2 method, bukan di middleware, karena
+        // action approve/reject cuma boleh role tertentu)
+        Route::get('permits/{permitId}/overtimes', [PermitOvertimeController::class, 'index']);
+        Route::post('permits/{permitId}/overtimes', [PermitOvertimeController::class, 'store']);
     });
     Route::middleware('permission:permits')->group(function () {
-        Route::post('permits/{id}/approve', [PermitController::class, 'approve']);
-        Route::post('permits/{id}/reject', [PermitController::class, 'reject']);
+        Route::post('permits/{id}/admin-review', [PermitController::class, 'adminReview']);
+        Route::post('permits/{permitId}/overtimes/{overtimeId}/admin-review', [PermitOvertimeController::class, 'adminReview']);
+    });
+    Route::middleware('permission:permits_gm')->group(function () {
+        Route::post('permits/{id}/gm-review', [PermitController::class, 'gmReview']);
+        Route::post('permits/{permitId}/overtimes/{overtimeId}/gm-review', [PermitOvertimeController::class, 'gmReview']);
     });
 
     // ---- Settings (admin-only) ----

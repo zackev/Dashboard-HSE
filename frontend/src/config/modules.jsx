@@ -246,7 +246,7 @@ export const NAV_GROUPS = [
     title: 'Performa & Kepatuhan',
     items: [
       { key: 'hse_performance', label: 'HSE Performance', permission: 'hse_performance' },
-      { key: 'permits', label: 'Ijin Kerja', permission: 'permits', altPermission: 'permits_own' },
+      { key: 'permits', label: 'Ijin Kerja', permission: 'permits', altPermission: ['permits_gm', 'permits_own'] },
       { key: 'kpis', label: 'KPI', permission: 'kpis' },
       { key: 'documents', label: 'Document', permission: 'documents', altPermission: 'documents_sop' }
     ]

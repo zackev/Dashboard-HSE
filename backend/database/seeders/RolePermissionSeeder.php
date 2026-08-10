@@ -8,11 +8,6 @@ use Illuminate\Database\Seeder;
 
 class RolePermissionSeeder extends Seeder
 {
-    /**
-     * Daftar semua "halaman/modul" yang bisa dicentang admin di
-     * Settings > Roles & Akses. Kalau kamu menambah modul baru di masa
-     * depan, tambahkan juga entrinya di sini.
-     */
     public static array $catalog = [
         ['key' => 'dashboard', 'label' => 'Dashboard', 'group' => 'Umum', 'sort_order' => 1],
         ['key' => 'incidents', 'label' => 'Incidents', 'group' => 'Modul HSE', 'sort_order' => 10],
@@ -22,9 +17,10 @@ class RolePermissionSeeder extends Seeder
         ['key' => 'hse_performance', 'label' => 'HSE Performance', 'group' => 'Modul HSE', 'sort_order' => 14],
         ['key' => 'kpis', 'label' => 'KPI', 'group' => 'Modul HSE', 'sort_order' => 15],
         ['key' => 'documents', 'label' => 'Documents (kelola penuh)', 'group' => 'Modul HSE', 'sort_order' => 16],
-        ['key' => 'permits', 'label' => 'Ijin Kerja — kelola & approve semua', 'group' => 'Ijin Kerja', 'sort_order' => 20],
-        ['key' => 'permits_own', 'label' => 'Ijin Kerja — ajukan & lihat milik sendiri', 'group' => 'Ijin Kerja', 'sort_order' => 21],
-        ['key' => 'documents_sop', 'label' => 'Dokumen SOP — lihat saja (read-only)', 'group' => 'Ijin Kerja', 'sort_order' => 22],
+        ['key' => 'permits', 'label' => 'Ijin Kerja — review tahap 1 (Admin/Pengawas K3)', 'group' => 'Ijin Kerja', 'sort_order' => 20],
+        ['key' => 'permits_gm', 'label' => 'Ijin Kerja — review tahap 2 / final (GM)', 'group' => 'Ijin Kerja', 'sort_order' => 21],
+        ['key' => 'permits_own', 'label' => 'Ijin Kerja — ajukan & lihat milik sendiri', 'group' => 'Ijin Kerja', 'sort_order' => 22],
+        ['key' => 'documents_sop', 'label' => 'Dokumen SOP — lihat saja (read-only)', 'group' => 'Ijin Kerja', 'sort_order' => 23],
         ['key' => 'settings', 'label' => 'Settings (kelola role & karyawan)', 'group' => 'Administrasi', 'sort_order' => 30],
     ];
 
@@ -46,5 +42,15 @@ class RolePermissionSeeder extends Seeder
         );
         $employeeKeys = ['dashboard', 'permits_own', 'documents_sop'];
         $employee->permissions()->sync(Permission::whereIn('key', $employeeKeys)->pluck('id'));
+
+        // Role GM dibuat sebagai starting point (bukan "bawaan sistem" -> tetap
+        // bisa diedit/dihapus admin lewat Settings kalau perlu), supaya tidak
+        // perlu diklik manual satu-satu setelah update ini.
+        $gm = Role::updateOrCreate(
+            ['slug' => 'gm'],
+            ['name' => 'GM', 'is_default' => false]
+        );
+        $gmKeys = ['dashboard', 'permits_gm'];
+        $gm->permissions()->sync(Permission::whereIn('key', $gmKeys)->pluck('id'));
     }
 }
