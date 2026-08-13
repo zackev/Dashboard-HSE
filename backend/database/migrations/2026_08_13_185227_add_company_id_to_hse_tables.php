@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         $tables = [
@@ -25,29 +22,48 @@ return new class extends Migration
         ];
 
         foreach ($tables as $tableName) {
-            Schema::table($tableName, function (Blueprint $table) {
-                $table->foreignId('company_id')
-                    ->nullable()
-                    ->after('id')
-                    ->index();
-            });
 
-            DB::table($tableName)->update([
-                'company_id' => 1,
+            // 1. Tambahkan company_id hanya jika belum ada
+            if (!Schema::hasColumn($tableName, 'company_id')) {
+                Schema::table($tableName, function (Blueprint $table) {
+                    $table->foreignId('company_id')
+                        ->nullable()
+                        ->after('id')
+                        ->index();
+                });
+            }
+
+            // 2. Isi data lama dengan company default
+            DB::table($tableName)
+                ->whereNull('company_id')
+                ->update([
+                    'company_id' => 1,
+                ]);
+
+            // 3. Tambahkan foreign key jika belum ada
+            $foreignKeyExists = DB::selectOne("
+                SELECT COUNT(*) AS count
+                FROM information_schema.TABLE_CONSTRAINTS
+                WHERE CONSTRAINT_SCHEMA = DATABASE()
+                  AND TABLE_NAME = ?
+                  AND CONSTRAINT_NAME = ?
+                  AND CONSTRAINT_TYPE = 'FOREIGN KEY'
+            ", [
+                $tableName,
+                $tableName . '_company_id_foreign',
             ]);
 
-            Schema::table($tableName, function (Blueprint $table) {
-                $table->foreign('company_id')
-                    ->references('id')
-                    ->on('companies')
-                    ->cascadeOnDelete();
-            });
+            if ((int) $foreignKeyExists->count === 0) {
+                Schema::table($tableName, function (Blueprint $table) {
+                    $table->foreign('company_id')
+                        ->references('id')
+                        ->on('companies')
+                        ->cascadeOnDelete();
+                });
+            }
         }
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         $tables = [
@@ -63,8 +79,30 @@ return new class extends Migration
         ];
 
         foreach ($tables as $tableName) {
+
+            if (!Schema::hasColumn($tableName, 'company_id')) {
+                continue;
+            }
+
+            $foreignKeyExists = DB::selectOne("
+                SELECT COUNT(*) AS count
+                FROM information_schema.TABLE_CONSTRAINTS
+                WHERE CONSTRAINT_SCHEMA = DATABASE()
+                  AND TABLE_NAME = ?
+                  AND CONSTRAINT_NAME = ?
+                  AND CONSTRAINT_TYPE = 'FOREIGN KEY'
+            ", [
+                $tableName,
+                $tableName . '_company_id_foreign',
+            ]);
+
+            if ((int) $foreignKeyExists->count > 0) {
+                Schema::table($tableName, function (Blueprint $table) {
+                    $table->dropForeign(['company_id']);
+                });
+            }
+
             Schema::table($tableName, function (Blueprint $table) {
-                $table->dropForeign(['company_id']);
                 $table->dropColumn('company_id');
             });
         }
