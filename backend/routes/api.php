@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\PermitOvertimeController;
 use App\Http\Controllers\Api\Settings\RoleController;
 use App\Http\Controllers\Api\Settings\UserController;
 use App\Http\Controllers\Api\TrainingController;
+use App\Http\Controllers\Api\Settings\CompanyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // (nama endpoint /stats dipertahankan sama seperti versi lama supaya
     // frontend React yang sudah ada tidak perlu diubah)
     Route::get('/stats', [DashboardController::class, 'index']);
+    Route::get('/stats/export', [DashboardController::class, 'export']);
 
     // Notifikasi (bell icon)
     Route::get('/notifications', [NotificationController::class, 'index']);
@@ -145,5 +147,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('users', [UserController::class, 'store']);
         Route::put('users/{id}', [UserController::class, 'update']);
         Route::delete('users/{id}', [UserController::class, 'destroy']);
+
+        Route::get('company', [CompanyController::class, 'show']);
+        Route::put('company', [CompanyController::class, 'update']);
     });
 });

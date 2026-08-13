@@ -7,6 +7,7 @@
  */
 
 const BASE = "/api";
+export const STORAGE_BASE = "/storage";
 
 let csrfReady = false;
 
@@ -70,6 +71,19 @@ export const api = {
       credentials: "include",
       headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify(body),
+    }).then(handle);
+  },
+
+  postForm: async (path, formData) => {
+    await ensureCsrf();
+
+    return fetch(`${BASE}${path}`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        ...authHeaders(),
+      },
+      body: formData,
     }).then(handle);
   },
 

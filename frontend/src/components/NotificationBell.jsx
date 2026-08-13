@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Bell, CheckCheck } from 'lucide-react';
-import { api } from '../lib/api.js';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Bell, CheckCheck } from "lucide-react";
+import { api } from "../lib/api.js";
+import { useNavigate } from "react-router-dom";
 
 const POLL_MS = 20000;
 
@@ -14,7 +14,7 @@ export default function NotificationBell() {
 
   const load = useCallback(async () => {
     try {
-      const { data, unread_count } = await api.get('/notifications');
+      const { data, unread_count } = await api.get("/notifications");
       setItems(data);
       setUnread(unread_count);
     } catch {
@@ -32,8 +32,8 @@ export default function NotificationBell() {
     function onClickOutside(e) {
       if (boxRef.current && !boxRef.current.contains(e.target)) setOpen(false);
     }
-    document.addEventListener('mousedown', onClickOutside);
-    return () => document.removeEventListener('mousedown', onClickOutside);
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
   }, []);
 
   async function handleItemClick(item) {
@@ -49,7 +49,7 @@ export default function NotificationBell() {
 
   async function markAllRead() {
     try {
-      await api.postJson('/notifications/read-all', {});
+      await api.postJson("/notifications/read-all", {});
       load();
     } catch {
       /* noop */
@@ -66,13 +66,13 @@ export default function NotificationBell() {
         <Bell size={16} />
         {unread > 0 && (
           <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-bad px-1 text-[10px] font-bold text-white">
-            {unread > 9 ? '9+' : unread}
+            {unread > 9 ? "9+" : unread}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 z-50 mt-2 w-80 max-w-[90vw] rounded-[12px] border border-border bg-surface shadow-modal">
+        <div className="absolute left-full top-full z-[100] mt-2 ml-2 w-80 max-w-[90vw] rounded-[12px] border border-border bg-surface shadow-modal max-md:left-auto max-md:right-0 max-md:ml-0">
           <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
             <span className="text-sm font-bold">Notifikasi</span>
             {unread > 0 && (
@@ -86,17 +86,21 @@ export default function NotificationBell() {
           </div>
           <div className="max-h-80 overflow-y-auto">
             {items.length === 0 && (
-              <p className="px-4 py-6 text-center text-xs text-muted">Belum ada notifikasi.</p>
+              <p className="px-4 py-6 text-center text-xs text-muted">
+                Belum ada notifikasi.
+              </p>
             )}
             {items.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleItemClick(item)}
                 className={`block w-full border-b border-border px-4 py-2.5 text-left text-[12.5px] last:border-b-0 hover:bg-surface2 ${
-                  item.read_at ? 'opacity-60' : ''
+                  item.read_at ? "opacity-60" : ""
                 }`}
               >
-                <div className="font-semibold">{item.data?.title || 'Notifikasi'}</div>
+                <div className="font-semibold">
+                  {item.data?.title || "Notifikasi"}
+                </div>
                 <div className="mt-0.5 text-muted">{item.data?.message}</div>
               </button>
             ))}

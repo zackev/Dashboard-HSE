@@ -29,6 +29,10 @@
   --color-bg: 18 22 26;
   --color-sidebar: 31 59 92;
   --color-surface: 27 33 38;
+
+  --color-sidebar-ink: 233 237 241;
+  --color-sidebar-muted: 141 152 163;
+  --color-sidebar-yellow: 242 194 48;
 }
 
 html.light {

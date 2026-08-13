@@ -10,16 +10,53 @@ use Illuminate\Support\Str;
 
 class RoleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $roles = Role::with('permissions:id,key,label')->withCount('users')->orderBy('id')->get();
+        $roles = Role::with('permissions:id,key,label')
+            ->withCount('users')
+            ->orderBy('id')
+            ->get();
+
         return response()->json(['data' => $roles]);
     }
 
     public function permissionsCatalog()
     {
-        // Semua "page/module" yang bisa dicentang admin di halaman Settings.
-        $permissions = Permission::orderBy('sort_order')->get();
+        // Permission sistem yang wajib tersedia.
+        // Tidak membuat role apa pun.
+        // Aman untuk database production karena menggunakan updateOrCreate().
+        $systemPermissions = [
+            [
+                'key' => 'permits',
+                'label' => 'Ijin Kerja — Review Tahap 1',
+                'group' => 'Ijin Kerja',
+                'sort_order' => 20,
+            ],
+            [
+                'key' => 'permits_gm',
+                'label' => 'Ijin Kerja — Final Approval',
+                'group' => 'Ijin Kerja',
+                'sort_order' => 21,
+            ],
+            [
+                'key' => 'permits_own',
+                'label' => 'Ijin Kerja — Ajukan & Lihat Milik Sendiri',
+                'group' => 'Ijin Kerja',
+                'sort_order' => 22,
+            ],
+        ];
+
+        foreach ($systemPermissions as $permission) {
+            Permission::updateOrCreate(
+                ['key' => $permission['key']],
+                $permission
+            );
+        }
+
+        $permissions = Permission::orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+
         return response()->json(['data' => $permissions]);
     }
 
@@ -33,18 +70,30 @@ class RoleController extends Controller
 
         $role = Role::create([
             'name' => $data['name'],
-            'slug' => Str::slug($data['name']).'-'.Str::random(4),
+            'slug' => Str::slug($data['name']) . '-' . Str::random(4),
             'is_default' => false,
+            'company_id' => $request->user()->company_id,
         ]);
 
-        $this->syncPermissions($role, $data['permission_keys'] ?? []);
+        $this->syncPermissions(
+            $role,
+            $data['permission_keys'] ?? []
+        );
 
-        return response()->json(['data' => $role->load('permissions')], 201);
+        return response()->json([
+            'data' => $role->load('permissions'),
+        ], 201);
     }
 
     public function update(Request $request, int $id)
     {
         $role = Role::findOrFail($id);
+
+        if ($role->is_default) {
+            return response()->json([
+                'error' => 'Role bawaan sistem tidak bisa diubah.',
+            ], 422);
+        }
 
         $data = $request->validate([
             'name' => 'sometimes|required|string|max:100',
@@ -53,14 +102,21 @@ class RoleController extends Controller
         ]);
 
         if (isset($data['name'])) {
-            $role->update(['name' => $data['name']]);
+            $role->update([
+                'name' => $data['name'],
+            ]);
         }
 
         if ($request->has('permission_keys')) {
-            $this->syncPermissions($role, $data['permission_keys'] ?? []);
+            $this->syncPermissions(
+                $role,
+                $data['permission_keys'] ?? []
+            );
         }
 
-        return response()->json(['data' => $role->load('permissions')]);
+        return response()->json([
+            'data' => $role->load('permissions'),
+        ]);
     }
 
     public function destroy(int $id)
@@ -68,19 +124,27 @@ class RoleController extends Controller
         $role = Role::findOrFail($id);
 
         if ($role->is_default) {
-            return response()->json(['error' => 'Role bawaan sistem (Admin/Employee) tidak bisa dihapus.'], 422);
+            return response()->json([
+                'error' => 'Role bawaan sistem (Admin/Employee) tidak bisa dihapus.',
+            ], 422);
         }
+
         if ($role->users()->exists()) {
-            return response()->json(['error' => 'Role masih dipakai oleh karyawan. Pindahkan karyawan ke role lain terlebih dulu.'], 422);
+            return response()->json([
+                'error' => 'Role masih dipakai oleh karyawan. Pindahkan karyawan ke role lain terlebih dulu.',
+            ], 422);
         }
 
         $role->delete();
+
         return response()->json(['data' => true]);
     }
 
     protected function syncPermissions(Role $role, array $keys): void
     {
-        $ids = Permission::whereIn('key', $keys)->pluck('id', 'key');
+        $ids = Permission::whereIn('key', $keys)
+            ->pluck('id', 'key');
+
         $role->permissions()->sync($ids->values());
     }
 }

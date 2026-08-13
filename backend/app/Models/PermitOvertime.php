@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\CompanyScope;
 use Illuminate\Database\Eloquent\Model;
 
 class PermitOvertime extends Model
@@ -26,5 +27,16 @@ class PermitOvertime extends Model
     public function gmReviewer()
     {
         return $this->belongsTo(User::class, 'gm_reviewed_by');
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new CompanyScope);
+
+        static::creating(function (PermitOvertime $overtime) {
+            if (auth()->check() && ! $overtime->company_id) {
+                $overtime->company_id = auth()->user()->company_id;
+            }
+        });
     }
 }

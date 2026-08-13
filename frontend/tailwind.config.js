@@ -19,6 +19,8 @@ export default {
         ink: themeColor("--color-ink"),
         muted: themeColor("--color-muted"),
         sidebar: "rgb(var(--color-sidebar) / <alpha-value>)",
+        sidebarInk: "rgb(var(--color-sidebar-ink) / <alpha-value>)",
+        sidebarMuted: "rgb(var(--color-sidebar-muted) / <alpha-value>)",
         brand: {
           orange: themeColor("--color-orange"),
           orangedim: themeColor("--color-orangedim"),

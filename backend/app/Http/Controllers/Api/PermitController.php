@@ -120,8 +120,10 @@ class PermitController extends Controller
 
         $permit = Permit::create($payload);
 
-        $admins = User::whereHas('role.permissions', fn ($q) => $q->where('key', 'permits'))
-            ->where('is_active', true)->get();
+        $admins = User::where('company_id', $user->company_id)
+        ->whereHas('role.permissions', fn ($q) => $q->where('key', 'permits'))
+        ->where('is_active', true)
+        ->get();
         if ($admins->isNotEmpty()) {
             Notification::send($admins, new PermitSubmitted($permit));
         }
@@ -201,8 +203,10 @@ class PermitController extends Controller
         if (! $approve) {
             $this->notifyOwner($permit);
         } else {
-            $gms = User::whereHas('role.permissions', fn ($q) => $q->where('key', 'permits_gm'))
-                ->where('is_active', true)->get();
+            $gms = User::where('company_id', $permit->company_id)
+            ->whereHas('role.permissions', fn ($q) => $q->where('key', 'permits_gm'))
+            ->where('is_active', true)
+            ->get();
             if ($gms->isNotEmpty()) {
                 Notification::send($gms, new PermitSubmitted($permit));
             }

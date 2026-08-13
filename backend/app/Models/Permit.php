@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use App\Models\Scopes\CompanyScope;
 use Illuminate\Database\Eloquent\Model;
 
 class Permit extends Model
@@ -89,4 +89,16 @@ class Permit extends Model
         }
         return false;
     }
+
+            protected static function booted(): void
+    {
+        static::addGlobalScope(new CompanyScope);
+
+        static::creating(function (Permit $permit) {
+            if (auth()->check() && !$permit->company_id) {
+                $permit->company_id = auth()->user()->company_id;
+            }
+        });
+    }
+
 }
