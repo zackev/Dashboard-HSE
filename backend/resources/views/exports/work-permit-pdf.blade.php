@@ -136,6 +136,7 @@
         height: 14px;
     }
 </style>
+
 </head>
 
 <body>
@@ -158,6 +159,30 @@
             $logoPath = $possiblePath;
         }
     }
+
+    $adminStatus = strtoupper($permit->admin_status ?? 'PENDING');
+    $gmStatus = strtoupper($permit->gm_status ?? 'PENDING');
+
+    $adminApproved = $adminStatus === 'APPROVED';
+    $adminRejected = $adminStatus === 'REJECTED';
+
+    $gmApproved = $gmStatus === 'APPROVED';
+    $gmRejected = $gmStatus === 'REJECTED';
+
+    $ot = $permit->overtimes->first();
+
+    $adminStatusStyle = match ($adminStatus) {
+        'APPROVED' => 'background:#dcfce7;color:#166534;border:1px solid #86efac;',
+        'REJECTED' => 'background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;',
+        default => 'background:#fef3c7;color:#92400e;border:1px solid #fcd34d;',
+    };
+
+    $gmStatusStyle = match ($gmStatus) {
+        'APPROVED' => 'background:#dcfce7;color:#166534;border:1px solid #86efac;',
+        'REJECTED' => 'background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;',
+        default => 'background:#fef3c7;color:#92400e;border:1px solid #fcd34d;',
+    };
+
 @endphp
 
 
@@ -571,20 +596,33 @@
     </tr>
 
 
+    {{-- =====================================================
+         JAM IZIN
+    ====================================================== --}}
     <tr>
 
+        {{-- IZIN DIBERIKAN --}}
         <td>
-            Mulai Jam : {{ $permit->start_time }}
-            <br>
-            Sampai Jam : {{ $permit->end_time }}
+
+            @if ($adminApproved)
+
+                Mulai Jam : {{ $permit->start_time }}
+                <br>
+                Sampai Jam : {{ $permit->end_time }}
+
+            @else
+
+                <span class="italic small">
+                    Izin belum diberikan
+                </span>
+
+            @endif
+
         </td>
 
 
+        {{-- IZIN LEMBUR --}}
         <td>
-
-            @php
-                $ot = $permit->overtimes->first();
-            @endphp
 
             @if ($ot)
 
@@ -603,13 +641,14 @@
         </td>
 
 
+        {{-- IZIN DIBATALKAN --}}
         <td>
 
-            @if ($permit->status === 'Rejected')
+            @if ($adminRejected || $gmRejected)
 
-                Jam : {{ now()->format('H:i') }}
-                <br>
-                Keterangan : {{ $permit->rejection_reason }}
+                <span class="italic small">
+                    Izin dibatalkan karena hasil review
+                </span>
 
             @else
 
@@ -624,6 +663,9 @@
     </tr>
 
 
+    {{-- =====================================================
+         DISIAPKAN
+    ====================================================== --}}
     <tr class="sig-row">
 
         <td class="bold">
@@ -653,6 +695,9 @@
     </tr>
 
 
+    {{-- =====================================================
+         NAMA PEMOHON
+    ====================================================== --}}
     <tr>
 
         <td>
@@ -662,20 +707,40 @@
         </td>
 
         <td>
-            Nama : {{ $ot->requester->name ?? '-' }}
+            Nama : {{ $ot?->requester?->name ?? '-' }}
             <br>
-            Tanggal : {{ $ot?->created_at?->format('d M Y') ?? '-' }}
+            Tanggal :
+            {{ $ot?->created_at?->format('d M Y') ?? '-' }}
         </td>
 
         <td>
-            Nama : -
-            <br>
-            Tanggal : -
+            @if ($adminRejected)
+                Nama : {{ $permit->adminReviewer?->name ?? '-' }}
+                <br>
+                Tanggal :
+                {{ $permit->admin_reviewed_at
+                    ? \Carbon\Carbon::parse($permit->admin_reviewed_at)->format('d M Y')
+                    : '-' }}
+            @elseif ($gmRejected)
+                Nama : {{ $permit->gmReviewer?->name ?? '-' }}
+                <br>
+                Tanggal :
+                {{ $permit->gm_reviewed_at
+                    ? \Carbon\Carbon::parse($permit->gm_reviewed_at)->format('d M Y')
+                    : '-' }}
+            @else
+                Nama : -
+                <br>
+                Tanggal : -
+            @endif
         </td>
 
     </tr>
 
 
+    {{-- =====================================================
+         DIPERIKSA
+    ====================================================== --}}
     <tr class="sig-row">
 
         <td class="bold">
@@ -705,35 +770,135 @@
     </tr>
 
 
+    {{-- =====================================================
+         REVIEW ADMIN
+    ====================================================== --}}
     <tr>
 
+        {{-- IZIN DIBERIKAN --}}
         <td>
-            Nama : {{ $permit->adminReviewer->name ?? '-' }}
-            <br>
-            Tanggal :
-            {{ $permit->admin_reviewed_at
-                ? \Carbon\Carbon::parse($permit->admin_reviewed_at)->format('d M Y')
-                : '-' }}
+
+            @if ($adminApproved)
+
+                <span style="
+                    display:inline-block;
+                    padding:4px 10px;
+                    border-radius:4px;
+                    font-size:10px;
+                    font-weight:bold;
+                    {{ $adminStatusStyle }}
+                ">
+                    APPROVED
+                </span>
+
+                <br><br>
+
+                Nama : {{ $permit->adminReviewer?->name ?? '-' }}
+
+                <br>
+
+                Tanggal :
+                {{ $permit->admin_reviewed_at
+                    ? \Carbon\Carbon::parse($permit->admin_reviewed_at)->format('d M Y')
+                    : '-' }}
+
+            @else
+
+                <span class="italic small">
+                    -
+                </span>
+
+            @endif
+
         </td>
 
+
+        {{-- IZIN LEMBUR --}}
         <td>
-            Nama : {{ $ot->adminReviewer->name ?? '-' }}
-            <br>
-            Tanggal :
-            {{ $ot?->admin_reviewed_at
-                ? \Carbon\Carbon::parse($ot->admin_reviewed_at)->format('d M Y')
-                : '-' }}
+
+            @if ($ot)
+
+                <span style="
+                    display:inline-block;
+                    padding:4px 10px;
+                    border-radius:4px;
+                    font-size:10px;
+                    font-weight:bold;
+                    {{ strtoupper($ot->admin_status ?? 'PENDING') === 'APPROVED'
+                        ? 'background:#dcfce7;color:#166534;border:1px solid #86efac;'
+                        : (strtoupper($ot->admin_status ?? 'PENDING') === 'REJECTED'
+                            ? 'background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;'
+                            : 'background:#fef3c7;color:#92400e;border:1px solid #fcd34d;')
+                    }}
+                ">
+                    {{ strtoupper($ot->admin_status ?? 'PENDING') }}
+                </span>
+
+                <br><br>
+
+                Nama : {{ $ot->adminReviewer?->name ?? '-' }}
+
+                <br>
+
+                Tanggal :
+                {{ $ot?->admin_reviewed_at
+                    ? \Carbon\Carbon::parse($ot->admin_reviewed_at)->format('d M Y')
+                    : '-' }}
+
+            @else
+
+                <span class="italic small">
+                    -
+                </span>
+
+            @endif
+
         </td>
 
+
+        {{-- IZIN DIBATALKAN --}}
         <td>
-            Nama : -
-            <br>
-            Tanggal : -
+
+            @if ($adminRejected)
+
+                <span style="
+                    display:inline-block;
+                    padding:4px 10px;
+                    border-radius:4px;
+                    font-size:10px;
+                    font-weight:bold;
+                    {{ $adminStatusStyle }}
+                ">
+                    REJECTED
+                </span>
+
+                <br><br>
+
+                Nama : {{ $permit->adminReviewer?->name ?? '-' }}
+
+                <br>
+
+                Tanggal :
+                {{ $permit->admin_reviewed_at
+                    ? \Carbon\Carbon::parse($permit->admin_reviewed_at)->format('d M Y')
+                    : '-' }}
+
+            @else
+
+                <span class="italic small">
+                    -
+                </span>
+
+            @endif
+
         </td>
 
     </tr>
 
 
+    {{-- =====================================================
+         MENGETAHUI GM
+    ====================================================== --}}
     <tr class="sig-row">
 
         <td class="bold">
@@ -763,35 +928,141 @@
     </tr>
 
 
+    {{-- =====================================================
+         REVIEW GM
+    ====================================================== --}}
     <tr>
 
+        {{-- IZIN DIBERIKAN --}}
         <td>
-            Nama : {{ $permit->gmReviewer->name ?? '-' }}
-            <br>
-            Tanggal :
-            {{ $permit->gm_reviewed_at
-                ? \Carbon\Carbon::parse($permit->gm_reviewed_at)->format('d M Y')
-                : '-' }}
+
+            @if ($gmApproved)
+
+                <span style="
+                    display:inline-block;
+                    padding:4px 10px;
+                    border-radius:4px;
+                    font-size:10px;
+                    font-weight:bold;
+                    {{ $gmStatusStyle }}
+                ">
+                    APPROVED
+                </span>
+
+                <br><br>
+
+                Nama : {{ $permit->gmReviewer?->name ?? '-' }}
+
+                <br>
+
+                Tanggal :
+                {{ $permit->gm_reviewed_at
+                    ? \Carbon\Carbon::parse($permit->gm_reviewed_at)->format('d M Y')
+                    : '-' }}
+
+            @elseif ($adminApproved && $gmStatus === 'PENDING')
+
+                <span class="italic small">
+                    Menunggu persetujuan GM
+                </span>
+
+            @else
+
+                <span class="italic small">
+                    -
+                </span>
+
+            @endif
+
         </td>
 
+
+        {{-- IZIN LEMBUR --}}
         <td>
-            Nama : {{ $ot->gmReviewer->name ?? '-' }}
-            <br>
-            Tanggal :
-            {{ $ot?->gm_reviewed_at
-                ? \Carbon\Carbon::parse($ot->gm_reviewed_at)->format('d M Y')
-                : '-' }}
+
+            @if ($ot)
+
+                <span style="
+                    display:inline-block;
+                    padding:4px 10px;
+                    border-radius:4px;
+                    font-size:10px;
+                    font-weight:bold;
+                    {{ strtoupper($ot->gm_status ?? 'PENDING') === 'APPROVED'
+                        ? 'background:#dcfce7;color:#166534;border:1px solid #86efac;'
+                        : (strtoupper($ot->gm_status ?? 'PENDING') === 'REJECTED'
+                            ? 'background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;'
+                            : 'background:#fef3c7;color:#92400e;border:1px solid #fcd34d;')
+                    }}
+                ">
+                    {{ strtoupper($ot->gm_status ?? 'PENDING') }}
+                </span>
+
+                <br><br>
+
+                Nama : {{ $ot->gmReviewer?->name ?? '-' }}
+
+                <br>
+
+                Tanggal :
+                {{ $ot?->gm_reviewed_at
+                    ? \Carbon\Carbon::parse($ot->gm_reviewed_at)->format('d M Y')
+                    : '-' }}
+
+            @else
+
+                <span class="italic small">
+                    -
+                </span>
+
+            @endif
+
         </td>
 
+
+        {{-- IZIN DIBATALKAN --}}
         <td>
-            Nama : -
-            <br>
-            Tanggal : -
+
+            @if ($gmRejected)
+
+                <span style="
+                    display:inline-block;
+                    padding:4px 10px;
+                    border-radius:4px;
+                    font-size:10px;
+                    font-weight:bold;
+                    {{ $gmStatusStyle }}
+                ">
+                    REJECTED
+                </span>
+
+                <br><br>
+
+                Nama : {{ $permit->gmReviewer?->name ?? '-' }}
+
+                <br>
+
+                Tanggal :
+                {{ $permit->gm_reviewed_at
+                    ? \Carbon\Carbon::parse($permit->gm_reviewed_at)->format('d M Y')
+                    : '-' }}
+
+            @else
+
+                <span class="italic small">
+                    -
+                </span>
+
+            @endif
+
         </td>
 
     </tr>
 
 
+    {{-- =====================================================
+         CATATAN
+    ====================================================== --}}
     <tr>
 
         <td colspan="3" class="small italic">
@@ -802,7 +1073,6 @@
     </tr>
 
 </table>
-
 
 {{-- =========================================================
      CATATAN SISTEM

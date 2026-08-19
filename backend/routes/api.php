@@ -111,6 +111,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // dan employee (permission 'permits_own') semua akses endpoint yang sama;
     // scoping detail (lihat semua vs cuma milik sendiri) ditangani di
     // PermitController itu sendiri.
+    Route::middleware('permission.any:permits,permits_gm')->group(function () {
+        Route::get('permit-overtimes', [PermitOvertimeController::class, 'indexAll']);
+    });
     Route::get('permits/form-options', [PermitController::class, 'formOptions']);
     Route::middleware('permission.any:permits,permits_gm,permits_own')->group(function () {
         Route::get('permits', [PermitController::class, 'index']);
@@ -125,6 +128,16 @@ Route::middleware('auth:sanctum')->group(function () {
         // action approve/reject cuma boleh role tertentu)
         Route::get('permits/{permitId}/overtimes', [PermitOvertimeController::class, 'index']);
         Route::post('permits/{permitId}/overtimes', [PermitOvertimeController::class, 'store']);
+
+        Route::put(
+            'permits/{permitId}/overtimes/{overtimeId}',
+            [PermitOvertimeController::class, 'update']
+        );
+
+        Route::delete(
+            'permits/{permitId}/overtimes/{overtimeId}',
+            [PermitOvertimeController::class, 'destroy']
+        );
     });
     Route::middleware('permission:permits')->group(function () {
         Route::post('permits/{id}/admin-review', [PermitController::class, 'adminReview']);

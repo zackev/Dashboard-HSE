@@ -37,6 +37,34 @@ class PermitOvertimeController extends Controller
             'total' => $rows->count()
         ]);
     }
+    public function indexAll(Request $request)
+    {
+        $user = $request->user();
+
+        if (
+            ! $user->hasPermission('permits') &&
+            ! $user->hasPermission('permits_gm')
+        ) {
+            return response()->json([
+                'error' => 'Anda tidak punya akses ke pengajuan izin lembur.'
+            ], 403);
+        }
+
+        $rows = PermitOvertime::with([
+            'permit:id,permit_no,location,area,plant,user_id,status',
+            'requester:id,name',
+            'adminReviewer:id,name',
+            'gmReviewer:id,name',
+        ])
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->get();
+
+        return response()->json([
+            'data' => $rows,
+            'total' => $rows->count(),
+        ]);
+    }
 
     public function store(Request $request, int $permitId)
     {
@@ -92,6 +120,91 @@ class PermitOvertimeController extends Controller
             'data' => $overtime
         ], 201);
     }
+
+    public function update(Request $request, int $permitId, int $overtimeId)
+    {
+        $user = $request->user();
+
+        $permit = Permit::where('company_id', $user->company_id)
+            ->where('user_id', $user->id)
+            ->findOrFail($permitId);
+
+        $overtime = PermitOvertime::where('company_id', $user->company_id)
+            ->where('permit_id', $permit->id)
+            ->where('requested_by', $user->id)
+            ->findOrFail($overtimeId);
+
+        // Tidak boleh diubah jika sudah masuk tahap GM
+        // atau sudah Approved final.
+        if (
+            $overtime->status === 'GM Review' ||
+            $overtime->status === 'Approved'
+        ) {
+            return response()->json([
+                'error' => 'Pengajuan lembur sudah masuk proses GM atau sudah disetujui dan tidak dapat diubah.'
+            ], 422);
+        }
+
+        $data = $request->validate([
+            'date' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required',
+            'reason' => 'nullable|string',
+        ]);
+
+        $overtime->update([
+            ...$data,
+
+            // Setujui ulang dari awal setelah diperbaiki.
+            'status' => 'Submitted',
+
+            'admin_status' => 'Pending',
+            'admin_reviewed_by' => null,
+            'admin_reviewed_at' => null,
+            'admin_note' => null,
+
+            'gm_status' => 'Pending',
+            'gm_reviewed_by' => null,
+            'gm_reviewed_at' => null,
+            'gm_note' => null,
+        ]);
+
+        return response()->json([
+            'data' => $overtime->fresh()
+        ]);
+    }
+
+    public function destroy(Request $request, int $permitId, int $overtimeId)
+    {
+        $user = $request->user();
+
+        $permit = Permit::where('company_id', $user->company_id)
+            ->where('user_id', $user->id)
+            ->findOrFail($permitId);
+
+        $overtime = PermitOvertime::where('company_id', $user->company_id)
+            ->where('permit_id', $permit->id)
+            ->where('requested_by', $user->id)
+            ->findOrFail($overtimeId);
+
+        // Tidak boleh dihapus jika sudah masuk tahap GM
+        // atau sudah Approved final.
+        if (
+            $overtime->status === 'GM Review' ||
+            $overtime->status === 'Approved'
+        ) {
+            return response()->json([
+                'error' => 'Pengajuan lembur sudah masuk proses GM atau sudah disetujui dan tidak dapat dihapus.'
+            ], 422);
+        }
+
+        $overtime->delete();
+
+        return response()->json([
+            'message' => 'Pengajuan lembur berhasil dihapus.'
+        ]);
+    }
+
 
     public function adminReview(
         Request $request,
